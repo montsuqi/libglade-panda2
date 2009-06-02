@@ -237,6 +237,10 @@ panda_clist_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 			col, rsize > csize ? rsize : csize);
 		gtk_tree_view_column_set_widget(column, child);
 		gtk_tree_view_column_set_alignment(column, GTK_MISC(child)->xalign);
+		gtk_tree_view_column_set_clickable(column, FALSE);
+		if (!GTK_PANDA_CLIST(w)->show_titles) {
+			gtk_widget_hide(child);
+		}
 		col++;
 	}
 }
@@ -967,18 +971,18 @@ panda_clist_new(GladeXML *xml, GladeWidgetInfo *info)
 					glade_enum_from_string(
 						GTK_TYPE_SELECTION_MODE,
 						attr->value));
+			else if (!strcmp(attr->name, "show_titles")) {
+				if (attr->value[0] == 'T')
+					gtk_panda_clist_titles_show(GTK_PANDA_CLIST(clist));
+				else
+					gtk_panda_clist_titles_hide(GTK_PANDA_CLIST(clist));
+			}
 #if 0
 			else if (!strcmp(attr->name, "shadow_type"))
 				gtk_panda_clist_set_shadow_type(GTK_PANDA_CLIST(clist),
 					glade_enum_from_string(
 						GTK_TYPE_SHADOW_TYPE,
 						attr->value));
-			else if (!strcmp(attr->name, "show_titles")) {
-				if (attr->value[0] == 'T')
-					gtk_panda_clist_column_titles_show(GTK_PANDA_CLIST(clist));
-				else
-					gtk_panda_clist_column_titles_hide(GTK_PANDA_CLIST(clist));
-			}
 #endif
 			break;
 		}
