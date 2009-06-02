@@ -457,7 +457,8 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
 #endif
 	if (wrap)
 		gtk_label_set_line_wrap(GTK_LABEL(label), wrap);
-	misc_set (GTK_MISC(label), info);
+	if (GTK_IS_MISC(label))
+		misc_set (GTK_MISC(label), info);
 	return label;
 }
 
@@ -487,7 +488,8 @@ accellabel_new (GladeXML *xml, GladeWidgetInfo *info)
 		gtk_label_set_justify(GTK_LABEL(label), just);
 	if (wrap)
 		gtk_label_set_line_wrap(GTK_LABEL(label), wrap);
-	misc_set(GTK_MISC(label), info);
+	if (GTK_IS_MISC(label))
+		misc_set(GTK_MISC(label), info);
 
 	return label;
 }
