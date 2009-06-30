@@ -1486,20 +1486,11 @@ glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
 	gboolean allow_grow = window->allow_grow;
 	gboolean allow_shrink = window->allow_shrink;
 
-/** FIXME
- * gtk_window_set_policy is deprecated, 
- * Use gtk_window_set_resizable() instead.
- */
-
-#if 0
-	gboolean auto_shrink = window->auto_shrink;
-#else
-	gboolean auto_shrink = TRUE;
-#endif
 	gchar *wmname = NULL, *wmclass = NULL;
 	gint width;
 	gint height;
     
+	gtk_window_get_default_size(window, &width, &height);
 
 	for (tmp = info->attributes; tmp != NULL; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
@@ -1511,16 +1502,13 @@ glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
 			else if (!strcmp(attr->name, "allow_shrink"))
 				allow_shrink = attr->value[0] == 'T';
 			else if (!strcmp(attr->name, "auto_shrink"))
-				auto_shrink = attr->value[0] == 'T';
+				// do nothing
 			break;
 		case 'd':
-			gtk_window_get_default_size(window, &width, &height);
 			if (!strcmp(attr->name, "default_height"))
-				gtk_window_set_default_size(window,
-					width, strtol(attr->value, NULL, 0));
+				height = strtol(attr->value, NULL, 0);
 			else if (!strcmp(attr->name, "default_width"))
-				gtk_window_set_default_size(window,
-					strtol(attr->value, NULL, 0), height);
+				width = strtol(attr->value, NULL, 0);
 			break;
 		case 'm':
 			if (!strcmp(attr->name, "modal"))
@@ -1552,8 +1540,8 @@ glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
 			break;
 		}
 	}
-
-	gtk_window_set_policy(window, allow_shrink, allow_grow, auto_shrink);
+	gtk_window_set_default_size(window, width, height);
+ 	gtk_window_set_resizable(window, allow_grow);
 
 	if (wmname != NULL || wmclass != NULL)
 		gtk_window_set_wmclass(window,
