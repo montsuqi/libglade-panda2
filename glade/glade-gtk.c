@@ -236,7 +236,9 @@ panda_clist_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 		gtk_panda_clist_set_column_width(GTK_PANDA_CLIST(w), 
 			col, rsize > csize ? rsize : csize);
 		gtk_tree_view_column_set_widget(column, child);
-		gtk_tree_view_column_set_alignment(column, GTK_MISC(child)->xalign);
+		if (GTK_IS_MISC(child)) {
+			gtk_tree_view_column_set_alignment(column, GTK_MISC(child)->xalign);
+		}
 		gtk_tree_view_column_set_clickable(column, FALSE);
 		if (!GTK_PANDA_CLIST(w)->show_titles) {
 			gtk_widget_hide(child);
