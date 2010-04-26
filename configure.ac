@@ -59,13 +59,6 @@ PKG_CHECK_MODULES(LIBGLADE_PANDA, [dnl
   )
 AC_DEFINE([USE_PANDA], 1 , "")
 
-AC_CHECK_LIB(gtkpanda-2.0, gtk_panda_pdf_new,
-    enable_pdf=1,
-    enable_pdf=0)
-if test $enable_pdf = 1 ; then
-    AC_DEFINE(USE_PDF, 1, "")
-fi
-
 AM_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION(0.16.1)
 

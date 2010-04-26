@@ -44,13 +44,8 @@ main (int argc, char *argv[])
 
   preview = glade_xml_get_widget_by_long_name (xml,
     "window1.fixed1.pandaps1");
-#ifdef USE_PDF
   g_file_get_contents("test.pdf", &data, &size, NULL);
   gtk_panda_pdf_set(GTK_PANDA_PDF(preview), size, data);
-#else
-  g_file_get_contents("test.ps", &data, &size, NULL);
-  gtk_panda_ps_set(GTK_PANDA_PS(preview), size, data);
-#endif
 
   clist = glade_xml_get_widget_by_long_name (xml,
     "window1.fixed1.scrolledwindow1.pandaclist1");

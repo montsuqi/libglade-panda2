@@ -660,11 +660,7 @@ panda_html_new(GladeXML *xml, GladeWidgetInfo *info)
 static GtkWidget *
 panda_preview_new(GladeXML *xml, GladeWidgetInfo *info)
 {
-#ifdef USE_PDF
 	return gtk_panda_pdf_new();
-#else
-	return gtk_panda_ps_new();
-#endif
 }
 
 #endif
