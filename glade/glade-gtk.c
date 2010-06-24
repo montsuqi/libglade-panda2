@@ -738,6 +738,15 @@ panda_download_new(GladeXML *xml, GladeWidgetInfo *info)
 	wid = gtk_panda_download_new();
 	return wid;
 }
+
+static GtkWidget *
+panda_print_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+	GtkWidget *wid;
+
+	wid = gtk_panda_print_new();
+	return wid;
+}
 #endif
 
 static GtkWidget *
@@ -1437,6 +1446,7 @@ static const GladeWidgetBuildData widget_data[] = {
 	{"GtkPandaText",		panda_text_new,		NULL},
 	{"GtkPandaTimer",		panda_timer_new,	NULL},
 	{"GtkPandaDownload",	panda_download_new,	NULL},
+	{"GtkPandaPrint",		panda_print_new,	NULL},
 #endif
 	{"GtkProgressBar",		progressbar_new,	NULL},
 	{"GtkHSeparator",		hseparator_new,		NULL},
