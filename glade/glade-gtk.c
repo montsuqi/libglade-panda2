@@ -192,6 +192,7 @@ fixed_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 		      const char *longname)
 {
 	GList *tmp;
+	gint *x,*y;
 
 	for (tmp = info->children; tmp; tmp = tmp->next) {
 		GladeWidgetInfo *cinfo = tmp->data;
@@ -202,10 +203,17 @@ fixed_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 		for (tmp2 = cinfo->attributes; tmp2; tmp2 = tmp2->next) {
 			GladeAttribute *attr = tmp2->data;
 			
-			if (attr->name[0] == 'x' && attr->name[1] == '\0')
+			if (attr->name[0] == 'x' && attr->name[1] == '\0') {
 				xpos = strtol(attr->value, NULL, 0);
-			else if (attr->name[0] == 'y' && attr->name[1] == '\0')
+				x = g_malloc(sizeof(gint));
+				*x = xpos;
+				g_object_set_data(G_OBJECT(child),"x",x);
+			} else if (attr->name[0] == 'y' && attr->name[1] == '\0') {
 				ypos = strtol(attr->value, NULL, 0);
+				y = g_malloc(sizeof(gint));
+				*y = ypos;
+				g_object_set_data(G_OBJECT(child),"y",y);
+			}
 		}
 		gtk_fixed_put(GTK_FIXED(w), child, xpos, ypos);
 	}
