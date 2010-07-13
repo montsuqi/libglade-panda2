@@ -1536,14 +1536,22 @@ glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
 				wmclass = attr->value;
 			break;
 		case 'x':
-			if (attr->name[1] == '\0')
+			if (attr->name[1] == '\0') {
 				gtk_widget_set_uposition(GTK_WIDGET(window),
 					strtol(attr->value, NULL, 0), -2);
+				gint *x = g_malloc(sizeof(gint));
+				*x = strtol(attr->value, NULL, 0);
+				g_object_set_data(G_OBJECT(window),"x",x);
+			}
 			break;
 		case 'y':
-			if (attr->name[1] == '\0')
+			if (attr->name[1] == '\0') {
 				gtk_widget_set_uposition(GTK_WIDGET(window),
 					-2, strtol(attr->value, NULL, 0));
+				gint *y = g_malloc(sizeof(gint));
+				*y = strtol(attr->value, NULL, 0);
+				g_object_set_data(G_OBJECT(window),"y",y);
+			}
 			break;
 		}
 	}
