@@ -57,23 +57,13 @@ int main (int argc, char **argv)
   gtk_init(&argc, &argv);
   glade_init();
 
-  for (i = 1; i < argc; i++) {
-    if (!strcmp(argv[i], "--no-connect"))
-      no_connect = TRUE;
-    else if (filename == NULL)
-      filename = argv[i];
-    else if (rootnode == NULL)
-      rootnode = argv[i];
-    else {
-      g_print("Usage: %s [--no-connect] filename [rootnode]\n", argv[0]);
-      return 1;
-    }
+  if (argc < 3) {
+    g_print("Usage: %s rootnode filename\n", argv[0]);
   }
-  if (filename == NULL) {
-    g_print("Usage: %s [--no-connect] filename [rootnode]\n", argv[0]);
-    return 1;
-  }
-  
+
+  rootnode = argv[1];
+  filename = argv[2];
+
   xml = glade_xml_new(filename, rootnode);
 
   if (!xml) {
@@ -81,29 +71,15 @@ int main (int argc, char **argv)
     return 1;
   }
 
-  if (rootnode) {
-    GtkWidget *wid = glade_xml_get_widget(xml, rootnode);
-    if (!GTK_IS_WINDOW(wid)) {
-      GtkWidget *win, *frame;
+  GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_size_request(window,1024,768);
+  g_signal_connect(G_OBJECT(window), "destroy", 
+	G_CALLBACK(gtk_main_quit), NULL);
+  GtkWidget *widget = glade_xml_get_widget(xml, rootnode);
+  GtkWidget *child = (GtkWidget *)g_object_get_data(G_OBJECT(widget), "child");
+  gtk_container_add(GTK_CONTAINER(window), child);
 
-      win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-      gtk_signal_connect(GTK_OBJECT(win), "destroy",
-			 GTK_SIGNAL_FUNC(gtk_main_quit), NULL);
-      gtk_container_set_border_width(GTK_CONTAINER(win), 5);
-      frame = gtk_frame_new(NULL);
-      gtk_container_set_border_width(GTK_CONTAINER(frame), 5);
-      gtk_container_add(GTK_CONTAINER(win), frame);
-      gtk_widget_show(frame);
-      gtk_container_add(GTK_CONTAINER(frame), wid);
-      gtk_widget_show(win);
-    }
-  }
-
-  if (!no_connect)
-    glade_xml_signal_autoconnect(xml);
-
-  //g_object_unref(G_OBJECT(xml));
-
+  gtk_widget_show_all(window);
   gtk_main();
 
   return 0;

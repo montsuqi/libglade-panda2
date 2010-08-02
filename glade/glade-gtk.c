@@ -226,23 +226,15 @@ panda_clist_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 {
 	GList *tmp;
 	GtkTreeViewColumn *column;
-	GtkRequisition req;
 	gint col = 0;
 	gint csize;
-	gint rsize;
-
-#define COL_INSETS 11
 
 	for (tmp = info->children; tmp; tmp = tmp->next) {
 		GtkWidget *child = glade_xml_build_widget (xml, tmp->data,
 			longname);
 		gtk_widget_show(child);
 		column = gtk_tree_view_get_column(GTK_TREE_VIEW(w), col);
-		gtk_widget_size_request(child, &req);
-        csize = gtk_tree_view_column_get_fixed_width(column);
-		rsize = req.width + COL_INSETS;
-		gtk_panda_clist_set_column_width(GTK_PANDA_CLIST(w), 
-			col, rsize > csize ? rsize : csize);
+        csize = gtk_tree_view_column_get_min_width(column);
 		gtk_tree_view_column_set_widget(column, child);
 		if (GTK_IS_MISC(child)) {
 			gtk_tree_view_column_set_alignment(column, GTK_MISC(child)->xalign);
@@ -251,6 +243,7 @@ panda_clist_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 		if (!GTK_PANDA_CLIST(w)->show_titles) {
 			gtk_widget_hide(child);
 		}
+	 	gtk_widget_set_size_request(child,csize,-1);
 		col++;
 	}
 }
