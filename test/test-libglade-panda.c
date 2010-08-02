@@ -51,7 +51,6 @@ gboolean no_connect = FALSE;
 
 int main (int argc, char **argv)
 {
-  int i;
   GladeXML *xml;
 
   gtk_init(&argc, &argv);
