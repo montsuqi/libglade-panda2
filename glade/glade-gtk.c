@@ -238,8 +238,10 @@ panda_clist_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 		gtk_tree_view_column_set_widget(column, child);
 		if (GTK_IS_MISC(child)) {
 			gtk_tree_view_column_set_alignment(column, GTK_MISC(child)->xalign);
+			gtk_misc_set_padding(GTK_MISC(child),0,0);
 		}
 		gtk_tree_view_column_set_clickable(column, FALSE);
+		gtk_tree_view_column_set_spacing(column,0);
 		if (!GTK_PANDA_CLIST(w)->show_titles) {
 			gtk_widget_hide(child);
 		}
