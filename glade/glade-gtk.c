@@ -234,7 +234,7 @@ panda_clist_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 			longname);
 		gtk_widget_show(child);
 		column = gtk_tree_view_get_column(GTK_TREE_VIEW(w), col);
-        csize = gtk_tree_view_column_get_min_width(column);
+		csize = gtk_tree_view_column_get_min_width(column);
 		gtk_tree_view_column_set_widget(column, child);
 		if (GTK_IS_MISC(child)) {
 			gtk_tree_view_column_set_alignment(column, GTK_MISC(child)->xalign);
