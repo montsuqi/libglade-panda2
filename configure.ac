@@ -1,6 +1,6 @@
 -*- mode: autoconf -*-
 AC_PREREQ(2.52)
-AC_INIT(libglade-panda, 2.0.1)
+AC_INIT(libglade-panda, 2.0.2)
 AM_INIT_AUTOMAKE
 AC_CANONICAL_HOST
 AM_MAINTAINER_MODE
