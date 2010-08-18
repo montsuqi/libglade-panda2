@@ -550,7 +550,7 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 	gboolean editable = TRUE, 
 		text_visible = TRUE, 
 		im_enabled = FALSE;
-	enum gtk_panda_entry_input_mode input_mode = GTK_PANDA_ENTRY_IM_MODE;
+	GtkPandaEntryInputMode input_mode = GTK_PANDA_ENTRY_IM_MODE;
 
 	for (tmp = info->attributes; tmp; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
