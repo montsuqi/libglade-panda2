@@ -370,15 +370,16 @@ panda_combo_build_children (GladeXML *xml, GtkWidget *w,
 	entry = GTK_ENTRY(GTK_PANDA_COMBO(w)->entry);
 	for (tmp = cinfo->attributes; tmp; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
-		if (!strcmp(attr->name, "editable"))
+		if (!strcmp(attr->name, "editable")) {
 			gtk_entry_set_editable(entry, attr->value[0] == 'T');
-		else if (!strcmp(attr->name, "text_visible"))
+		} else if (!strcmp(attr->name, "text_visible")) {
 			gtk_entry_set_visibility(entry, attr->value[0] == 'T');
-		else if (!strcmp(attr->name, "text_max_length"))
+		} else if (!strcmp(attr->name, "text_max_length")) {
 			gtk_entry_set_max_length(entry, strtol(attr->value,
 							       NULL, 0));
-		else if (!strcmp(attr->name, "text"))
+		} else if (!strcmp(attr->name, "text")) {
 			gtk_entry_set_text(entry, attr->value);
+		}
 	}
 #endif
 	glade_xml_set_common_params(xml, GTK_PANDA_COMBO(w)->entry, cinfo, longname);
@@ -926,23 +927,31 @@ panda_combo_new (GladeXML *xml, GladeWidgetInfo *info)
 				GList *item_list = NULL;
 				gchar **items = g_strsplit(attr->value,"\n",0);
 				int i = 0;
-				for (i = 0; items[i] != NULL; i++)
-					item_list = g_list_append(item_list,
-								  _(items[i]));
-				if (item_list)
-					gtk_panda_combo_set_popdown_strings(
-						GTK_PANDA_COMBO(combo), item_list);
+				for (i = 0; items[i] != NULL; i++) {
+					item_list = g_list_append(item_list, _(items[i]));
+				}
+				if (item_list) {
+					gtk_panda_combo_set_popdown_strings(GTK_PANDA_COMBO(combo),
+						 item_list);
+				}
 				g_list_free(item_list);
 				g_strfreev(items);
 			}
 			break;
 		case 'u':
-			if (!strcmp(attr->name, "use_arrows"))
+			if (!strcmp(attr->name, "use_arrows")) {
 				gtk_panda_combo_set_use_arrows(GTK_PANDA_COMBO(combo),
 							attr->value[0] == 'T');
-			else if (!strcmp(attr->name, "use_arrows_always"))
-				gtk_panda_combo_set_use_arrows_always(
+			} else if (!strcmp(attr->name, "use_arrows_always")) {
+				gtk_panda_combo_set_loop_selection(
 					GTK_PANDA_COMBO(combo), attr->value[0]=='T');
+			}
+			break;
+		case 'l':
+			if (!strcmp(attr->name, "loop_selection")) {
+				gtk_panda_combo_set_loop_selection(
+					GTK_PANDA_COMBO(combo), attr->value[0]=='T');
+			}
 			break;
 		}
 	}
