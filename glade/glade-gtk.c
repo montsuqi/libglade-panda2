@@ -1002,10 +1002,8 @@ panda_clist_new(GladeXML *xml, GladeWidgetInfo *info)
 						GTK_TYPE_SELECTION_MODE,
 						attr->value));
 			else if (!strcmp(attr->name, "show_titles")) {
-				if (attr->value[0] == 'T')
-					gtk_panda_clist_titles_show(GTK_PANDA_CLIST(clist));
-				else
-					gtk_panda_clist_titles_hide(GTK_PANDA_CLIST(clist));
+				gtk_panda_clist_set_show_titles(GTK_PANDA_CLIST(clist),
+					attr->value[0] == 'T');
 			}
 #if 0
 			else if (!strcmp(attr->name, "shadow_type"))
