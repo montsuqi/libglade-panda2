@@ -985,13 +985,11 @@ panda_clist_new(GladeXML *xml, GladeWidgetInfo *info)
 		switch (attr->name[0]) {
 		case 'c':
 			if (!strcmp(attr->name, "column_widths")) {
-				char *pos = attr->value;
-				while (pos && *pos != '\0') {
-					int width = strtol(pos, &pos, 0);
-					if (*pos == ',') pos++;
-	   				gtk_panda_clist_set_column_width(
-						GTK_PANDA_CLIST(clist), cols++, width);
-				}
+				gtk_panda_clist_set_column_widths(GTK_PANDA_CLIST(clist), 
+					attr->value);
+			} else if (!strcmp(attr->name, "columns")) {
+	   			gtk_panda_clist_set_n_columns(
+					GTK_PANDA_CLIST(clist), atoi(attr->value));
 			}
 			break;
 		case 's':
