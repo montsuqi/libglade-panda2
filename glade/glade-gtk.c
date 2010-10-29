@@ -551,7 +551,7 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 	gboolean editable = TRUE, 
 		text_visible = TRUE, 
 		im_enabled = FALSE;
-	GtkPandaEntryInputMode input_mode = GTK_PANDA_ENTRY_IM_MODE;
+	GtkPandaEntryInputMode input_mode = GTK_PANDA_ENTRY_XIM;
 
 	for (tmp = info->attributes; tmp; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
@@ -565,13 +565,13 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 			if (!strcmp(attr->name, "input_mode"))
 				switch (attr->value[0]) {
 				case 'A': /* ASCII */
-					input_mode = GTK_PANDA_ENTRY_ASCII_MODE;
+					input_mode = GTK_PANDA_ENTRY_ASCII;
 					break;
 				case 'K': /* KANA */
-					input_mode = GTK_PANDA_ENTRY_KANA_MODE;
+					input_mode = GTK_PANDA_ENTRY_KANA;
 					break;
 				default: /* XIM */
-					input_mode = GTK_PANDA_ENTRY_IM_MODE;
+					input_mode = GTK_PANDA_ENTRY_XIM;
 					break;
 				}
 			break;
@@ -587,8 +587,8 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 			/* for backward compatibility - removed soon */
 			if (!strcmp(attr->name, "use_xim"))
 				input_mode = attr->value[0] == 'T'
-					? GTK_PANDA_ENTRY_IM_MODE
-					: GTK_PANDA_ENTRY_ASCII_MODE;
+					? GTK_PANDA_ENTRY_XIM
+					: GTK_PANDA_ENTRY_ASCII;
 			break;
 		case 'x':
 			if (!strcmp(attr->name, "xim_enabled"))
@@ -605,7 +605,7 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 	gtk_entry_set_editable(GTK_ENTRY(entry), editable);
 	gtk_entry_set_visibility(GTK_ENTRY(entry), text_visible);
 	gtk_panda_entry_set_input_mode(GTK_PANDA_ENTRY(entry), input_mode);
-	gtk_panda_entry_set_im_enabled(GTK_PANDA_ENTRY(entry), im_enabled);
+	gtk_panda_entry_set_xim_enabled(GTK_PANDA_ENTRY(entry), im_enabled);
 	return entry;
 }
 
@@ -1359,17 +1359,16 @@ pixmap_new(GladeXML *xml, GladeWidgetInfo *info)
 			filename = glade_xml_relative_file(xml, attr->value);
 		}
 	}
-	if (filename)
-		wid = gtk_image_new_from_file(filename);
-	else
-		wid = gtk_image_new();
-	g_free(filename);
+	wid = gtk_panda_pixmap_new();
+	if (filename) {
+	  g_free(filename);
+    }
 	return wid;
 }
 
 
 static GtkWidget *
-fileentry_new(GladeXML *xml, GladeWidgetInfo *info)
+file_entry_new(GladeXML *xml, GladeWidgetInfo *info)
 {
     GtkWidget *wid;
     GList *tmp;
@@ -1388,12 +1387,12 @@ fileentry_new(GladeXML *xml, GladeWidgetInfo *info)
         else if (!strcmp(attr->name, "modal"))
             modal = (attr->value[0] == 'T');
     }
-    wid = gtk_panda_fileentry_new();
+    wid = gtk_panda_file_entry_new();
     return wid;
 }
 
 static void
-fileentry_build_children (GladeXML *xml, GtkWidget *w,
+file_entry_build_children (GladeXML *xml, GtkWidget *w,
               GladeWidgetInfo *info, const char *longname)
 {
     GList *tmp;
@@ -1416,7 +1415,7 @@ fileentry_build_children (GladeXML *xml, GtkWidget *w,
     }
     if (!tmp)
         return;
-    entry = GTK_ENTRY(GTK_PANDA_FILEENTRY(w)->entry);
+    entry = GTK_ENTRY(GTK_PANDA_FILE_ENTRY(w)->entry);
 
     for (tmp = cinfo->attributes; tmp; tmp = tmp->next) {
         GladeAttribute *attr = tmp->data;
@@ -1471,7 +1470,7 @@ static const GladeWidgetBuildData widget_data[] = {
 	{"GtkWindow",			window_new,			window_build_children},
 /* Gnome widgets in previouse version */
 	{"GnomePixmap",			pixmap_new,			NULL},
-	{"GnomeFileEntry",		fileentry_new,		fileentry_build_children},
+	{"GnomeFileEntry",		file_entry_new,		file_entry_build_children},
 	{NULL,NULL,NULL}
 };
 
