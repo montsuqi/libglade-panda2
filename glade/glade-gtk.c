@@ -705,7 +705,7 @@ panda_text_new(GladeXML *xml, GladeWidgetInfo *info)
         gtk_text_buffer_set_text(buffer, tmp, strlen(tmp));
         gtk_text_view_set_buffer(GTK_TEXT_VIEW(wid), buffer);
 	}
-	gtk_panda_text_set_im_enabled(GTK_PANDA_TEXT(wid), im);
+	gtk_panda_text_set_xim_enabled(GTK_PANDA_TEXT(wid), im);
 	return wid;
 }
 
