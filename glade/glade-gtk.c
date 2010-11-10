@@ -1321,6 +1321,7 @@ window_new (GladeXML *xml, GladeWidgetInfo *info)
 	GList *tmp;
 	GtkWindowType type = GTK_WINDOW_TOPLEVEL;
 	char *title = NULL;
+	char *wmclass = "";
 
 	info->visible = FALSE;
 
@@ -1329,16 +1330,19 @@ window_new (GladeXML *xml, GladeWidgetInfo *info)
 
 		switch (attr->name[0]) {
 		case 't':
-			if (!strcmp(attr->name, "title"))
+			if (!strcmp(attr->name, "title")) {
 				title = attr->value;
-			else if (!strcmp(attr->name, "type"))
-				type = glade_enum_from_string(
-					GTK_TYPE_WINDOW_TYPE, attr->value);
+			} else if (!strcmp(attr->name, "type")) {
+				if (strcmp(attr->value, "GTK_WINDOW_TOPLEVEL")) {
+					wmclass = "glclient-dialog";
+				}
+			}
 			break;
 		}
 	}
-	win = gtk_window_new(type);
+	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(win), _(title));
+	gtk_window_set_wmclass(GTK_WINDOW(win), wmclass, wmclass);
 	glade_xml_set_window_props(GTK_WINDOW(win), info);
 	glade_xml_set_toplevel(xml, GTK_WINDOW(win));
 	return win;
