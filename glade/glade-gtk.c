@@ -1012,6 +1012,30 @@ panda_clist_new(GladeXML *xml, GladeWidgetInfo *info)
 	}
 	return clist;
 }
+
+static GtkWidget *
+panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+	GtkWidget *table;
+	GList *tmp;
+
+	table = gtk_panda_table_new();
+
+	for (tmp = info->attributes; tmp; tmp = tmp->next) {
+		GladeAttribute *attr = tmp->data;
+		if (!strcmp(attr->name, "columns")) {
+			gtk_panda_table_set_columns(
+				GTK_PANDA_TABLE(table), atoi(attr->value));
+		} else if (!strcmp(attr->name, "column_types")) {
+			gtk_panda_table_set_types(GTK_PANDA_TABLE(table), 
+				attr->value);
+		} else if (!strcmp(attr->name, "column_titles")) {
+			gtk_panda_table_set_titles(GTK_PANDA_TABLE(table), 
+				attr->value);
+		} 
+	}
+	return table;
+}
 #endif	/* USE_PANDA */
 
 static GtkWidget *
@@ -1454,6 +1478,7 @@ static const GladeWidgetBuildData widget_data[] = {
 	{"GtkPandaTimer",		panda_timer_new,	NULL},
 	{"GtkPandaDownload",	panda_download_new,	NULL},
 	{"GtkPandaPrint",		panda_print_new,	NULL},
+	{"GtkPandaTable",		panda_table_new,	NULL},
 #endif
 	{"GtkProgressBar",		progressbar_new,	NULL},
 	{"GtkHSeparator",		hseparator_new,		NULL},
