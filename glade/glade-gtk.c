@@ -921,17 +921,11 @@ panda_combo_new (GladeXML *xml, GladeWidgetInfo *info)
 			break;
 		case 'i':
 			if (!strcmp(attr->name, "items")) {
-				GList *item_list = NULL;
 				gchar **items = g_strsplit(attr->value,"\n",0);
-				int i = 0;
-				for (i = 0; items[i] != NULL; i++) {
-					item_list = g_list_append(item_list, _(items[i]));
-				}
-				if (item_list) {
+				if (items) {
 					gtk_panda_combo_set_popdown_strings(GTK_PANDA_COMBO(combo),
-						 item_list);
+						 items);
 				}
-				g_list_free(item_list);
 				g_strfreev(items);
 			}
 			break;
@@ -1032,7 +1026,10 @@ panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
 		} else if (!strcmp(attr->name, "column_titles")) {
 			gtk_panda_table_set_titles(GTK_PANDA_TABLE(table), 
 				attr->value);
-		} 
+		} else if (!strcmp(attr->name, "rows")) {
+			gtk_panda_table_set_rows(
+				GTK_PANDA_TABLE(table), atoi(attr->value));
+		}
 	}
 	return table;
 }
