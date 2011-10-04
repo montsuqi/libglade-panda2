@@ -23,16 +23,12 @@
 #define GLADE_PRIVATE_H
 #include <stdio.h>
 #include <glib.h>
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkaccelgroup.h>
+#include <gtk/gtk.h>
 #include <glade/glade-xml.h>
 #include <glade/glade-widget-tree.h>
 
 struct _GladeXMLPrivate {
 	GladeWidgetTree *tree; /* the tree for this GladeXML */
-
-	GtkTooltips *tooltips; /* if not NULL, holds all tooltip info */
 
 	/*
 	 * hash tables of widgets.  The keys are stored as widget data, and get

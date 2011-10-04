@@ -29,14 +29,8 @@
 #include <glade/glade-build.h>
 #include <glade/glade-private.h>
 #include <gmodule.h>
-#include <gtk/gtksignal.h>
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkcontainer.h>
-#include <gtk/gtklabel.h>
+#include <gtk/gtk.h>
 
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#endif
 
 #include "glade.h"
 
@@ -51,7 +45,7 @@ static GObjectClass *parent_class;
 static void glade_xml_finalize(GObject *object);
 
 static void glade_xml_build_interface(GladeXML *xml, GladeWidgetTree *tree,
-				      const char *root);
+              const char *root);
 
 GladeExtendedFunc *glade_xml_build_extended_widget = NULL;
 
@@ -90,35 +84,33 @@ glade_xml_get_type(void)
 static void
 glade_xml_class_init (GladeXMLClass *klass)
 {
-	parent_class = g_type_class_peek_parent(klass);
+  parent_class = g_type_class_peek_parent(klass);
 
-	G_OBJECT_CLASS(klass)->finalize = glade_xml_finalize;
+  G_OBJECT_CLASS(klass)->finalize = glade_xml_finalize;
 }
 
 static void
 glade_xml_init (GladeXML *self)
 {
-	GladeXMLPrivate *priv;
-	
-	self->priv = priv = g_new0 (GladeXMLPrivate, 1);
+  GladeXMLPrivate *priv;
+  
+  self->priv = priv = g_new0 (GladeXMLPrivate, 1);
 
-	self->filename = NULL;
-	self->txtdomain = NULL;
+  self->filename = NULL;
+  self->txtdomain = NULL;
 
-	priv->tree = NULL;
-	priv->tooltips = gtk_tooltips_new();
-	gtk_tooltips_enable(priv->tooltips);
-	priv->name_hash = g_hash_table_new(g_str_hash, g_str_equal);
-	priv->longname_hash = g_hash_table_new(g_str_hash, g_str_equal);
-	priv->signals = g_hash_table_new(g_str_hash, g_str_equal);
-	priv->radio_groups = g_hash_table_new (g_str_hash, g_str_equal);
-	priv->toplevel = NULL;
-	priv->accel_groups = NULL;
-	priv->uline_accels = NULL;
-	priv->parent_accel = 0;
-	priv->focus_ulines = NULL;
-	priv->default_widget = NULL;
-	priv->focus_widget = NULL;
+  priv->tree = NULL;
+  priv->name_hash = g_hash_table_new(g_str_hash, g_str_equal);
+  priv->longname_hash = g_hash_table_new(g_str_hash, g_str_equal);
+  priv->signals = g_hash_table_new(g_str_hash, g_str_equal);
+  priv->radio_groups = g_hash_table_new (g_str_hash, g_str_equal);
+  priv->toplevel = NULL;
+  priv->accel_groups = NULL;
+  priv->uline_accels = NULL;
+  priv->parent_accel = 0;
+  priv->focus_ulines = NULL;
+  priv->default_widget = NULL;
+  priv->focus_widget = NULL;
 }
 
 /**
@@ -138,13 +130,13 @@ glade_xml_init (GladeXML *self)
 GladeXML *
 glade_xml_new(const char *fname, const char *root)
 {
-	GladeXML *self = g_object_new(GLADE_TYPE_XML, NULL);
+  GladeXML *self = g_object_new(GLADE_TYPE_XML, NULL);
 
-	if (!glade_xml_construct(self, fname, root, NULL)) {
-		g_object_unref(G_OBJECT(self));
-		return NULL;
-	}
-	return self;
+  if (!glade_xml_construct(self, fname, root, NULL)) {
+    g_object_unref(G_OBJECT(self));
+    return NULL;
+  }
+  return self;
 }
 
 /**
@@ -166,15 +158,15 @@ glade_xml_new(const char *fname, const char *root)
  */
 GladeXML *
 glade_xml_new_with_domain(const char *fname, const char *root,
-			  const char *domain)
+        const char *domain)
 {
-	GladeXML *self = g_object_new(GLADE_TYPE_XML, NULL);
+  GladeXML *self = g_object_new(GLADE_TYPE_XML, NULL);
 
-	if (!glade_xml_construct(self, fname, root, domain)) {
-		g_object_unref(G_OBJECT(self));
-		return NULL;
-	}
-	return self;
+  if (!glade_xml_construct(self, fname, root, domain)) {
+    g_object_unref(G_OBJECT(self));
+    return NULL;
+  }
+  return self;
 }
 
 /**
@@ -191,27 +183,27 @@ glade_xml_new_with_domain(const char *fname, const char *root,
  */
 gboolean
 glade_xml_construct (GladeXML *self, const char *fname, const char *root,
-		     const char *domain)
+         const char *domain)
 {
-	GladeWidgetTree *tree;
+  GladeWidgetTree *tree;
 
-	g_return_val_if_fail(self != NULL, FALSE);
-	g_return_val_if_fail(fname != NULL, FALSE);
+  g_return_val_if_fail(self != NULL, FALSE);
+  g_return_val_if_fail(fname != NULL, FALSE);
 
-	tree = glade_tree_get(fname);
+  tree = glade_tree_get(fname);
 
-	if (!tree)
-		return FALSE;
+  if (!tree)
+    return FALSE;
 
-	self->priv->tree = tree;
-	if (self->txtdomain) g_free(self->txtdomain);
-	self->txtdomain = g_strdup(domain);
-	if (self->filename)
-		g_free(self->filename);
-	self->filename = g_strdup(fname);
-	glade_xml_build_interface(self, tree, root);
+  self->priv->tree = tree;
+  if (self->txtdomain) g_free(self->txtdomain);
+  self->txtdomain = g_strdup(domain);
+  if (self->filename)
+    g_free(self->filename);
+  self->filename = g_strdup(fname);
+  glade_xml_build_interface(self, tree, root);
 
-	return TRUE;
+  return TRUE;
 }
 
 /**
@@ -231,21 +223,21 @@ glade_xml_construct (GladeXML *self, const char *fname, const char *root,
  */
 GladeXML 
 *glade_xml_new_from_memory(char *buffer, int size, const char *root,
-				    const char *domain)
+            const char *domain)
 {
-	GladeXML *self;
-	GladeWidgetTree *tree = glade_widget_tree_parse_memory(buffer, size);
+  GladeXML *self;
+  GladeWidgetTree *tree = glade_widget_tree_parse_memory(buffer, size);
 
-	if (!tree)
-		return NULL;
-	self = g_object_new(GLADE_TYPE_XML, NULL);
+  if (!tree)
+    return NULL;
+  self = g_object_new(GLADE_TYPE_XML, NULL);
 
-	self->priv->tree = tree;
-	self->txtdomain = g_strdup(domain);
-	self->filename = NULL;
-	glade_xml_build_interface(self, tree, root);
+  self->priv->tree = tree;
+  self->txtdomain = g_strdup(domain);
+  self->filename = NULL;
+  glade_xml_build_interface(self, tree, root);
 
-	return self;
+  return self;
 }
 
 /**
@@ -260,76 +252,76 @@ GladeXML
  */
 void
 glade_xml_signal_connect (GladeXML *self, const char *handlername,
-			  GCallback func)
+        GCallback func)
 {
-	GList *signals;
+  GList *signals;
 
-	g_return_if_fail(self != NULL);
-	g_return_if_fail(handlername != NULL);
-	g_return_if_fail(func != NULL);
+  g_return_if_fail(self != NULL);
+  g_return_if_fail(handlername != NULL);
+  g_return_if_fail(func != NULL);
 
-	signals = g_hash_table_lookup(self->priv->signals, handlername);
-	for (; signals != NULL; signals = signals->next) {
-		GladeSignalData *data = signals->data;
+  signals = g_hash_table_lookup(self->priv->signals, handlername);
+  for (; signals != NULL; signals = signals->next) {
+    GladeSignalData *data = signals->data;
 
-		if (data->connect_object) {
-			GObject *other = g_hash_table_lookup(self->priv->name_hash,
-							       data->connect_object);
-			g_signal_connect_object(data->signal_object, data->signal_name,
-				func, other, (data->signal_after ? G_CONNECT_AFTER : 0)
-				| G_CONNECT_SWAPPED);
-		} else {
-			/* the signal_data argument is just a string, 
-			 * but may be helpful for someone */
-			if (data->signal_after)
-				g_signal_connect_after(
-					data->signal_object, 
-					data->signal_name,
-					func, 
-					data->signal_data);
-			else
-				g_signal_connect(
-					data->signal_object, 
-					data->signal_name,
-					func, 
-					data->signal_data);
-		}
-	}
+    if (data->connect_object) {
+      GObject *other = g_hash_table_lookup(self->priv->name_hash,
+                     data->connect_object);
+      g_signal_connect_object(data->signal_object, data->signal_name,
+        func, other, (data->signal_after ? G_CONNECT_AFTER : 0)
+        | G_CONNECT_SWAPPED);
+    } else {
+      /* the signal_data argument is just a string, 
+       * but may be helpful for someone */
+      if (data->signal_after)
+        g_signal_connect_after(
+          data->signal_object, 
+          data->signal_name,
+          func, 
+          data->signal_data);
+      else
+        g_signal_connect(
+          data->signal_object, 
+          data->signal_name,
+          func, 
+          data->signal_data);
+    }
+  }
 }
 
 static void
 autoconnect_foreach(const char *signal_handler, GList *signals,
-		    GModule *allsymbols)
+        GModule *allsymbols)
 {
-	GCallback func;
+  GCallback func;
 
-	if (!g_module_symbol(allsymbols, signal_handler, (gpointer)&func)) {
-		g_warning("could not find signal handler '%s'.", signal_handler);
+  if (!g_module_symbol(allsymbols, signal_handler, (gpointer)&func)) {
+    g_warning("could not find signal handler '%s'.", signal_handler);
     }
-	else
-		for (; signals != NULL; signals = signals->next) {
-			GladeSignalData *data = signals->data;
-			if (data->connect_object) {
-				GladeXML *self = glade_get_widget_tree(
-					GTK_WIDGET(data->signal_object));
-				GObject *other = g_hash_table_lookup(self->priv->name_hash,
-								       data->connect_object);
-				g_signal_connect_object(data->signal_object, 
-					data->signal_name,
-					func, other, (data->signal_after ? G_CONNECT_AFTER : 0)
-					| G_CONNECT_SWAPPED);
+  else
+    for (; signals != NULL; signals = signals->next) {
+      GladeSignalData *data = signals->data;
+      if (data->connect_object) {
+        GladeXML *self = glade_get_widget_tree(
+          GTK_WIDGET(data->signal_object));
+        GObject *other = g_hash_table_lookup(self->priv->name_hash,
+                       data->connect_object);
+        g_signal_connect_object(data->signal_object, 
+          data->signal_name,
+          func, other, (data->signal_after ? G_CONNECT_AFTER : 0)
+          | G_CONNECT_SWAPPED);
 
-			} else {
-				/* the signal_data argument is just a string, 
- 				 * but may be helpful for someone */
-				if (data->signal_after)
-					g_signal_connect_after(data->signal_object, 
-						data->signal_name, func, data->signal_data);
-				else
-					g_signal_connect(data->signal_object, 
-						data->signal_name, func, data->signal_data);
-			}
-		}
+      } else {
+        /* the signal_data argument is just a string, 
+          * but may be helpful for someone */
+        if (data->signal_after)
+          g_signal_connect_after(data->signal_object, 
+            data->signal_name, func, data->signal_data);
+        else
+          g_signal_connect(data->signal_object, 
+            data->signal_name, func, data->signal_data);
+      }
+    }
 }
 
 /**
@@ -348,16 +340,16 @@ autoconnect_foreach(const char *signal_handler, GList *signals,
 void
 glade_xml_signal_autoconnect (GladeXML *self)
 {
-	GModule *allsymbols;
+  GModule *allsymbols;
 
-	g_return_if_fail(self != NULL);
-	if (!g_module_supported())
-		g_error("glade_xml_signal_autoconnect requires working gmodule");
+  g_return_if_fail(self != NULL);
+  if (!g_module_supported())
+    g_error("glade_xml_signal_autoconnect requires working gmodule");
 
-	/* get a handle on the main executable -- use this to find symbols */
-	allsymbols = g_module_open(NULL, 0);
-	g_hash_table_foreach(self->priv->signals, 
-		(GHFunc)autoconnect_foreach, allsymbols);
+  /* get a handle on the main executable -- use this to find symbols */
+  allsymbols = g_module_open(NULL, 0);
+  g_hash_table_foreach(self->priv->signals, 
+    (GHFunc)autoconnect_foreach, allsymbols);
 }
 
 typedef struct {
@@ -367,28 +359,28 @@ typedef struct {
 
 static void
 autoconnect_full_foreach(const char *signal_handler, GList *signals,
-			 connect_struct *conn)
+       connect_struct *conn)
 {
-	GladeXML *self = NULL;
+  GladeXML *self = NULL;
 
-	for (; signals != NULL; signals = signals->next) {
-		GladeSignalData *data = signals->data;
-		GObject *connect_object = NULL;
-		
-		if (data->connect_object) {
-			if (!self)
-				self = glade_get_widget_tree(
-						GTK_WIDGET(data->signal_object));
-			connect_object = g_hash_table_lookup(
-					self->priv->name_hash,
-					data->connect_object);
-		}
+  for (; signals != NULL; signals = signals->next) {
+    GladeSignalData *data = signals->data;
+    GObject *connect_object = NULL;
+    
+    if (data->connect_object) {
+      if (!self)
+        self = glade_get_widget_tree(
+            GTK_WIDGET(data->signal_object));
+      connect_object = g_hash_table_lookup(
+          self->priv->name_hash,
+          data->connect_object);
+    }
 
-		(* conn->func) (signal_handler, data->signal_object,
-				data->signal_name, data->signal_data,
-				connect_object, data->signal_after,
-				conn->user_data);
-	}
+    (* conn->func) (signal_handler, data->signal_object,
+        data->signal_name, data->signal_data,
+        connect_object, data->signal_after,
+        conn->user_data);
+  }
 }
 
 /**
@@ -423,21 +415,21 @@ autoconnect_full_foreach(const char *signal_handler, GList *signals,
  */
 void
 glade_xml_signal_connect_full(GladeXML *self, const gchar *handler_name,
-			      GladeXMLConnectFunc func, gpointer user_data)
+            GladeXMLConnectFunc func, gpointer user_data)
 {
-	connect_struct conn;
-	GList *signals;
+  connect_struct conn;
+  GList *signals;
 
-	g_return_if_fail(self != NULL);
-	g_return_if_fail(handler_name != NULL);
-	g_return_if_fail (func != NULL);
+  g_return_if_fail(self != NULL);
+  g_return_if_fail(handler_name != NULL);
+  g_return_if_fail (func != NULL);
 
-	/* rather than rewriting the code from the autoconnect_full version,
-	 * just reuse its helper function */
-	conn.func = func;
-	conn.user_data = user_data;
-	signals = g_hash_table_lookup(self->priv->signals, handler_name);
-	autoconnect_full_foreach(handler_name, signals, &conn);
+  /* rather than rewriting the code from the autoconnect_full version,
+   * just reuse its helper function */
+  conn.func = func;
+  conn.user_data = user_data;
+  signals = g_hash_table_lookup(self->priv->signals, handler_name);
+  autoconnect_full_foreach(handler_name, signals, &conn);
 }
 
 /**
@@ -454,17 +446,17 @@ glade_xml_signal_connect_full(GladeXML *self, const gchar *handler_name,
  */
 void
 glade_xml_signal_autoconnect_full (GladeXML *self, GladeXMLConnectFunc func,
-				   gpointer user_data)
+           gpointer user_data)
 {
-	connect_struct conn;
+  connect_struct conn;
 
-	g_return_if_fail(self != NULL);
-	g_return_if_fail (func != NULL);
+  g_return_if_fail(self != NULL);
+  g_return_if_fail (func != NULL);
 
-	conn.func = func;
-	conn.user_data = user_data;
-	g_hash_table_foreach(self->priv->signals,
-			     (GHFunc)autoconnect_full_foreach, &conn);
+  conn.func = func;
+  conn.user_data = user_data;
+  g_hash_table_foreach(self->priv->signals,
+           (GHFunc)autoconnect_full_foreach, &conn);
 }
 
 /**
@@ -483,43 +475,43 @@ glade_xml_signal_autoconnect_full (GladeXML *self, GladeXMLConnectFunc func,
  * demonstration of how to use glade_xml_signal_connect_full.
  */
 typedef struct {
-	GCallback func;
-	gpointer user_data;
+  GCallback func;
+  gpointer user_data;
 } connect_data_data;
 
 static void
 connect_data_connect_func(const gchar *handler_name, GObject *object,
-			  const gchar *signal_name, const gchar *signal_data,
-			  GObject *connect_object, gboolean after,
-			  gpointer user_data)
+        const gchar *signal_name, const gchar *signal_data,
+        GObject *connect_object, gboolean after,
+        gpointer user_data)
 {
-	connect_data_data *data = (connect_data_data *)user_data;
+  connect_data_data *data = (connect_data_data *)user_data;
 
-	if (connect_object) {
-		g_signal_connect_object(object, signal_name, data->func,
-			connect_object, 
-			(after ? G_CONNECT_AFTER : 0) | G_CONNECT_SWAPPED);
-	} else {
-		if (after)
-			g_signal_connect_after(object, signal_name,
-						 data->func, data->user_data);
-		else
-			g_signal_connect(object, signal_name,
-					   data->func, data->user_data);
-	}
+  if (connect_object) {
+    g_signal_connect_object(object, signal_name, data->func,
+      connect_object, 
+      (after ? G_CONNECT_AFTER : 0) | G_CONNECT_SWAPPED);
+  } else {
+    if (after)
+      g_signal_connect_after(object, signal_name,
+             data->func, data->user_data);
+    else
+      g_signal_connect(object, signal_name,
+             data->func, data->user_data);
+  }
 }
 
 void
 glade_xml_signal_connect_data (GladeXML *self, const char *handlername,
-			       GCallback func, gpointer user_data)
+             GCallback func, gpointer user_data)
 {
-	connect_data_data data;
+  connect_data_data data;
 
-	data.func = func;
-	data.user_data = user_data;
+  data.func = func;
+  data.user_data = user_data;
 
-	glade_xml_signal_connect_full(self, handlername,
-				      connect_data_connect_func, &data);
+  glade_xml_signal_connect_full(self, handlername,
+              connect_data_connect_func, &data);
 }
 
 /**
@@ -536,10 +528,10 @@ glade_xml_signal_connect_data (GladeXML *self, const char *handlername,
 GtkWidget *
 glade_xml_get_widget (GladeXML *self, const char *name)
 {
-	g_return_val_if_fail(self != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
+  g_return_val_if_fail(self != NULL, NULL);
+  g_return_val_if_fail(name != NULL, NULL);
 
-	return g_hash_table_lookup(self->priv->name_hash, name);
+  return g_hash_table_lookup(self->priv->name_hash, name);
 }
 
 
@@ -557,30 +549,30 @@ glade_xml_get_widget (GladeXML *self, const char *name)
  * name, or %NULL if none exists.
  */
 typedef struct {
-	const gchar *name;
-	GList *list;
+  const gchar *name;
+  GList *list;
 } widget_prefix_data;
 
 static void
 widget_prefix_add_to_list (gchar *name, gpointer value,
-			   widget_prefix_data *data)
+         widget_prefix_data *data)
 {
-	if (!strncmp (data->name, name, strlen (data->name)))
-		data->list = g_list_prepend (data->list, value);
+  if (!strncmp (data->name, name, strlen (data->name)))
+    data->list = g_list_prepend (data->list, value);
 }
 
 GList *
 glade_xml_get_widget_prefix (GladeXML *self, const gchar *prefix)
 {
-	widget_prefix_data data;
+  widget_prefix_data data;
 
-	data.name = prefix;
-	data.list = NULL;
+  data.name = prefix;
+  data.list = NULL;
 
-	g_hash_table_foreach (self->priv->name_hash,
-			      (GHFunc) widget_prefix_add_to_list, &data);
+  g_hash_table_foreach (self->priv->name_hash,
+            (GHFunc) widget_prefix_add_to_list, &data);
 
-	return data.list;
+  return data.list;
 }
 
 /**
@@ -598,12 +590,12 @@ glade_xml_get_widget_prefix (GladeXML *self, const gchar *prefix)
  */
 GtkWidget *
 glade_xml_get_widget_by_long_name(GladeXML *self,
-				  const char *longname)
+          const char *longname)
 {
-	g_return_val_if_fail(self != NULL, NULL);
-	g_return_val_if_fail(longname != NULL, NULL);
+  g_return_val_if_fail(self != NULL, NULL);
+  g_return_val_if_fail(longname != NULL, NULL);
 
-	return g_hash_table_lookup(self->priv->longname_hash, longname);
+  return g_hash_table_lookup(self->priv->longname_hash, longname);
 }
 
 /**
@@ -620,18 +612,18 @@ glade_xml_get_widget_by_long_name(GladeXML *self,
 gchar *
 glade_xml_relative_file(GladeXML *self, const gchar *filename)
 {
-	gchar *dirname, *tmp;
+  gchar *dirname, *tmp;
 
-	g_return_val_if_fail(self != NULL, NULL);
-	g_return_val_if_fail(filename != NULL, NULL);
+  g_return_val_if_fail(self != NULL, NULL);
+  g_return_val_if_fail(filename != NULL, NULL);
 
-	if (g_path_is_absolute(filename)) /* an absolute pathname */
-		return g_strdup(filename);
-	/* prepend XML file's dir onto filename */
-	dirname = g_dirname(self->filename);	
-	tmp = g_strconcat(dirname, G_DIR_SEPARATOR_S, filename, NULL);
-	g_free(dirname);
-	return tmp;
+  if (g_path_is_absolute(filename)) /* an absolute pathname */
+    return g_strdup(filename);
+  /* prepend XML file's dir onto filename */
+  dirname = g_dirname(self->filename);  
+  tmp = g_strconcat(dirname, G_DIR_SEPARATOR_S, filename, NULL);
+  g_free(dirname);
+  return tmp;
 }
 
 /**
@@ -645,10 +637,10 @@ glade_xml_relative_file(GladeXML *self, const gchar *filename)
 const char *
 glade_get_widget_name(GtkWidget *widget)
 {
-	g_return_val_if_fail(widget != NULL, NULL);
+  g_return_val_if_fail(widget != NULL, NULL);
 
-	return (const char *)g_object_get_data(G_OBJECT(widget),
-						 glade_xml_name_tag);
+  return (const char *)g_object_get_data(G_OBJECT(widget),
+             glade_xml_name_tag);
 }
 
 /**
@@ -664,10 +656,10 @@ glade_get_widget_name(GtkWidget *widget)
 const char *
 glade_get_widget_long_name (GtkWidget *widget)
 {
-	g_return_val_if_fail(widget != NULL, NULL);
+  g_return_val_if_fail(widget != NULL, NULL);
 
-	return (const char *)g_object_get_data(G_OBJECT(widget),
-						 glade_xml_longname_tag);
+  return (const char *)g_object_get_data(G_OBJECT(widget),
+             glade_xml_longname_tag);
 }
 
 /**
@@ -682,9 +674,9 @@ glade_get_widget_long_name (GtkWidget *widget)
 GladeXML *
 glade_get_widget_tree(GtkWidget *widget)
 {
-	g_return_val_if_fail(widget != NULL, NULL);
+  g_return_val_if_fail(widget != NULL, NULL);
 
-	return g_object_get_data(G_OBJECT(widget), glade_xml_tag);
+  return g_object_get_data(G_OBJECT(widget), glade_xml_tag);
 }
 
 /* ------------------------------------------- */
@@ -702,26 +694,19 @@ glade_get_widget_tree(GtkWidget *widget)
 void
 glade_xml_set_toplevel(GladeXML *xml, GtkWindow *window)
 {
-	static char *tooltips_key = "libglade::GladeXML::tooltips";
-
-	if (xml->priv->focus_widget)
-		gtk_widget_grab_focus(xml->priv->focus_widget);
-	if (xml->priv->default_widget)
-		gtk_widget_grab_default(xml->priv->default_widget);
-	xml->priv->focus_widget = NULL;
-	xml->priv->default_widget = NULL;
-	xml->priv->toplevel = window;
-	/* new toplevel needs new accel group */
-	if (xml->priv->accel_groups)
-		glade_xml_pop_accel(xml);
-	/* maybe put an assert that xml->priv->accel_groups == NULL here? */
-	xml->priv->accel_groups = NULL;
-	xml->priv->parent_accel = 0;
-	/* the window should hold a reference to the tooltips object */
-	g_object_ref(G_OBJECT(xml->priv->tooltips));
-	g_object_set_data_full(G_OBJECT(window), tooltips_key,
-				 xml->priv->tooltips,
-				 (GtkDestroyNotify)g_object_unref);
+  if (xml->priv->focus_widget)
+    gtk_widget_grab_focus(xml->priv->focus_widget);
+  if (xml->priv->default_widget)
+    gtk_widget_grab_default(xml->priv->default_widget);
+  xml->priv->focus_widget = NULL;
+  xml->priv->default_widget = NULL;
+  xml->priv->toplevel = window;
+  /* new toplevel needs new accel group */
+  if (xml->priv->accel_groups)
+    glade_xml_pop_accel(xml);
+  /* maybe put an assert that xml->priv->accel_groups == NULL here? */
+  xml->priv->accel_groups = NULL;
+  xml->priv->parent_accel = 0;
 }
 
  /**
@@ -735,11 +720,11 @@ glade_xml_set_toplevel(GladeXML *xml, GtkWindow *window)
 GtkAccelGroup *
 glade_xml_push_accel(GladeXML *xml)
 {
-	GtkAccelGroup *accel = gtk_accel_group_new();
+  GtkAccelGroup *accel = gtk_accel_group_new();
        
-	xml->priv->accel_groups
-		= g_slist_prepend(xml->priv->accel_groups, accel);
-	return accel;
+  xml->priv->accel_groups
+    = g_slist_prepend(xml->priv->accel_groups, accel);
+  return accel;
 }
 
 /* glade_xml_pop_accel:
@@ -752,17 +737,17 @@ glade_xml_push_accel(GladeXML *xml)
 GtkAccelGroup *
 glade_xml_pop_accel(GladeXML *xml)
 {
-	GtkAccelGroup *accel;
+  GtkAccelGroup *accel;
 
-	g_return_val_if_fail(xml->priv->accel_groups != NULL, NULL);
+  g_return_val_if_fail(xml->priv->accel_groups != NULL, NULL);
 
-	/* the accel group at the top of the stack */
-	accel = xml->priv->accel_groups->data;
-	xml->priv->accel_groups
-		= g_slist_remove(xml->priv->accel_groups, accel);
-	/* unref the accel group that was at the top of the stack */
-	gtk_accel_group_unref(accel);
-	return xml->priv->accel_groups ? xml->priv->accel_groups->data : NULL;
+  /* the accel group at the top of the stack */
+  accel = xml->priv->accel_groups->data;
+  xml->priv->accel_groups
+    = g_slist_remove(xml->priv->accel_groups, accel);
+  /* unref the accel group that was at the top of the stack */
+  g_object_unref(G_OBJECT(accel));
+  return xml->priv->accel_groups ? xml->priv->accel_groups->data : NULL;
 }
 
 /**
@@ -777,13 +762,13 @@ glade_xml_pop_accel(GladeXML *xml)
 GtkAccelGroup *
 glade_xml_ensure_accel(GladeXML *xml)
 {
-	if (!xml->priv->accel_groups) {
-		glade_xml_push_accel(xml);
-		if (xml->priv->toplevel)
-			gtk_window_add_accel_group(xml->priv->toplevel,
-					xml->priv->accel_groups->data);
-	}
-	return (GtkAccelGroup *)xml->priv->accel_groups->data;
+  if (!xml->priv->accel_groups) {
+    glade_xml_push_accel(xml);
+    if (xml->priv->toplevel)
+      gtk_window_add_accel_group(xml->priv->toplevel,
+          xml->priv->accel_groups->data);
+  }
+  return (GtkAccelGroup *)xml->priv->accel_groups->data;
 }
 
 /**
@@ -796,8 +781,8 @@ glade_xml_ensure_accel(GladeXML *xml)
  */
 void
 glade_xml_push_uline_accel(GladeXML *xml, GtkAccelGroup *uline) {
-	xml->priv->uline_accels = g_slist_prepend(xml->priv->uline_accels,
-						  uline);
+  xml->priv->uline_accels = g_slist_prepend(xml->priv->uline_accels,
+              uline);
 }
 
 /* glade_xml_pop_uline_accel:
@@ -808,9 +793,9 @@ glade_xml_push_uline_accel(GladeXML *xml, GtkAccelGroup *uline) {
  */
 void
 glade_xml_pop_uline_accel(GladeXML *xml) {
-	g_return_if_fail(xml->priv->uline_accels != NULL);
-	xml->priv->uline_accels = g_slist_remove(xml->priv->uline_accels,
-					xml->priv->uline_accels->data);
+  g_return_if_fail(xml->priv->uline_accels != NULL);
+  xml->priv->uline_accels = g_slist_remove(xml->priv->uline_accels,
+          xml->priv->uline_accels->data);
 }
 
 /*
@@ -823,10 +808,10 @@ glade_xml_pop_uline_accel(GladeXML *xml) {
  */
 GtkAccelGroup *
 glade_xml_get_uline_accel(GladeXML *xml) {
-	if (xml->priv->uline_accels)
-		return xml->priv->uline_accels->data;
-	else
-		return NULL;
+  if (xml->priv->uline_accels)
+    return xml->priv->uline_accels->data;
+  else
+    return NULL;
 }
 
 /**
@@ -846,23 +831,23 @@ glade_xml_get_uline_accel(GladeXML *xml) {
 void
 glade_xml_handle_label_accel(GladeXML *xml, const gchar *target, guint key)
 {
-	if (target) {
-		GtkWidget *twidget = glade_xml_get_widget(xml, target);
+  if (target) {
+    GtkWidget *twidget = glade_xml_get_widget(xml, target);
 
-		if (twidget)
-			gtk_widget_add_accelerator(twidget, "grab_focus",
-						   glade_xml_ensure_accel(xml),
-						   key, GDK_MOD1_MASK, 0);
-		else {
-			GladeFocusULine *uline = g_new(GladeFocusULine, 1);
+    if (twidget)
+      gtk_widget_add_accelerator(twidget, "grab_focus",
+               glade_xml_ensure_accel(xml),
+               key, GDK_MOD1_MASK, 0);
+    else {
+      GladeFocusULine *uline = g_new(GladeFocusULine, 1);
 
-			uline->widget_name = target;
-			uline->key = key;
-			xml->priv->focus_ulines =
-				g_list_prepend(xml->priv->focus_ulines, uline);
-		}
-	} else
-		xml->priv->parent_accel = key;
+      uline->widget_name = target;
+      uline->key = key;
+      xml->priv->focus_ulines =
+        g_list_prepend(xml->priv->focus_ulines, uline);
+    }
+  } else
+    xml->priv->parent_accel = key;
 }
 
 /**
@@ -879,10 +864,10 @@ glade_xml_handle_label_accel(GladeXML *xml, const gchar *target, guint key)
 guint
 glade_xml_get_parent_accel(GladeXML *xml)
 {
-	guint key = xml->priv->parent_accel;
+  guint key = xml->priv->parent_accel;
 
-	xml->priv->parent_accel = 0;
-	return key;
+  xml->priv->parent_accel = 0;
+  return key;
 }
 
 /**
@@ -900,129 +885,119 @@ glade_xml_get_parent_accel(GladeXML *xml)
 char *
 glade_xml_gettext(GladeXML *xml, const char *msgid)
 {
-	if (!msgid || msgid[0] == '\0')
-		return "";
-#ifdef ENABLE_NLS
-	if (xml->txtdomain)
-		return dgettext(xml->txtdomain, msgid);
-	else
-		return gettext(msgid);
-#else
-	return msgid;
-#endif
+  if (!msgid || msgid[0] == '\0')
+    return "";
+  return (char*)msgid;
 }
 
 /* this is a private function */
 static void
 glade_xml_add_signals(GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info)
 {
-	GList *tmp;
+  GList *tmp;
 
-	for (tmp = info->signals; tmp; tmp = tmp->next) {
-		GladeSignalInfo *sig = tmp->data;
-		GladeSignalData *data = g_new0(GladeSignalData, 1);
-		GList *list;
+  for (tmp = info->signals; tmp; tmp = tmp->next) {
+    GladeSignalInfo *sig = tmp->data;
+    GladeSignalData *data = g_new0(GladeSignalData, 1);
+    GList *list;
 
-		data->signal_object = G_OBJECT(w);
-		data->signal_name = sig->name;
-		data->signal_data = sig->data;
-		data->connect_object = sig->object;
-		data->signal_after = sig->after;
+    data->signal_object = G_OBJECT(w);
+    data->signal_name = sig->name;
+    data->signal_data = sig->data;
+    data->connect_object = sig->object;
+    data->signal_after = sig->after;
 
-		list = g_hash_table_lookup(xml->priv->signals, sig->handler);
-		list = g_list_prepend(list, data);
-		g_hash_table_insert(xml->priv->signals, sig->handler, list);
-	}
+    list = g_hash_table_lookup(xml->priv->signals, sig->handler);
+    list = g_list_prepend(list, data);
+    g_hash_table_insert(xml->priv->signals, sig->handler, list);
+  }
 }
 
 static void
 glade_xml_add_accels(GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info)
 {
-	GList *tmp;
-	for (tmp = info->accelerators; tmp; tmp = tmp->next) {
-		GladeAcceleratorInfo *accel = tmp->data;
-		debug(g_message("New Accel: key=%d,mod=%d -> %s:%s",
-				accel->key, accel->modifiers,
-				gtk_widget_get_name(w), accel->signal));
-		gtk_widget_add_accelerator(w, accel->signal,
-					   glade_xml_ensure_accel(xml),
-					   accel->key, accel->modifiers,
-					   GTK_ACCEL_VISIBLE);
-	}
+  GList *tmp;
+  for (tmp = info->accelerators; tmp; tmp = tmp->next) {
+    GladeAcceleratorInfo *accel = tmp->data;
+    debug(g_message("New Accel: key=%d,mod=%d -> %s:%s",
+        accel->key, accel->modifiers,
+        gtk_widget_get_name(w), accel->signal));
+    gtk_widget_add_accelerator(w, accel->signal,
+             glade_xml_ensure_accel(xml),
+             accel->key, accel->modifiers,
+             GTK_ACCEL_VISIBLE);
+  }
 }
 
 static void
 glade_style_attach (GtkWidget *widget, const char *style)
 {
-	const char *name = glade_get_widget_long_name (widget);
-	char *full_name;
-				
-	full_name = g_strconcat ("widget \"", name, "\" style \"GLADE_",
-				 style, "_style\"\n", NULL);
-	gtk_rc_parse_string(full_name);
-	g_free (full_name);
+  const char *name = glade_get_widget_long_name (widget);
+  char *full_name;
+        
+  full_name = g_strconcat ("widget \"", name, "\" style \"GLADE_",
+         style, "_style\"\n", NULL);
+  gtk_rc_parse_string(full_name);
+  g_free (full_name);
 }
 
 static void
 glade_xml_destroy_signals(char *key, GList *signal_datas)
 {
-	GList *tmp;
+  GList *tmp;
 
-	for (tmp = signal_datas; tmp; tmp = tmp->next) {
-		GladeSignalData *data = tmp->data;
-		g_free(data);
-	}
-	g_list_free(signal_datas);
+  for (tmp = signal_datas; tmp; tmp = tmp->next) {
+    GladeSignalData *data = tmp->data;
+    g_free(data);
+  }
+  g_list_free(signal_datas);
 }
 
 static void
 free_radio_groups(gpointer key, gpointer value, gpointer user_data)
 {
-	g_free(key);  /* the string name */
+  g_free(key);  /* the string name */
 }
 
 static void
 glade_xml_finalize(GObject *object)
 {
-	GladeXML *self = GLADE_XML(object);
-	GladeXMLPrivate *priv = self->priv;
-	
-	if (self->filename)
-		g_free(self->filename);
-	self->filename = NULL;
-	if (self->txtdomain)
-		g_free(self->txtdomain);
-	self->txtdomain = NULL;
+  GladeXML *self = GLADE_XML(object);
+  GladeXMLPrivate *priv = self->priv;
+  
+  if (self->filename)
+    g_free(self->filename);
+  self->filename = NULL;
+  if (self->txtdomain)
+    g_free(self->txtdomain);
+  self->txtdomain = NULL;
 
-	if (priv) {
-		if (priv->tree)
-			glade_widget_tree_unref(priv->tree);
-		/* strings are owned in the cached GladeWidgetTree structure */
-		g_hash_table_destroy(priv->name_hash);
-		/* strings belong to individual widgets -- don't free them */
-		g_hash_table_destroy(priv->longname_hash);
+  if (priv) {
+    if (priv->tree)
+      glade_widget_tree_unref(priv->tree);
+    /* strings are owned in the cached GladeWidgetTree structure */
+    g_hash_table_destroy(priv->name_hash);
+    /* strings belong to individual widgets -- don't free them */
+    g_hash_table_destroy(priv->longname_hash);
 
-		g_hash_table_foreach(priv->signals,
-				     (GHFunc)glade_xml_destroy_signals, NULL);
-		g_hash_table_destroy(priv->signals);
+    g_hash_table_foreach(priv->signals,
+             (GHFunc)glade_xml_destroy_signals, NULL);
+    g_hash_table_destroy(priv->signals);
 
-		/* the group name strings are owned by the GladeWidgetTree */
-		g_hash_table_foreach(self->priv->radio_groups,
-				     free_radio_groups, NULL);
-		g_hash_table_destroy(priv->radio_groups);
+    /* the group name strings are owned by the GladeWidgetTree */
+    g_hash_table_foreach(self->priv->radio_groups,
+             free_radio_groups, NULL);
+    g_hash_table_destroy(priv->radio_groups);
 
-		if (priv->tooltips)
-			g_object_unref(G_OBJECT(priv->tooltips));
+    /* there should only be at most one accel group on stack */
+    if (priv->accel_groups)
+      glade_xml_pop_accel(self);
 
-		/* there should only be at most one accel group on stack */
-		if (priv->accel_groups)
-			glade_xml_pop_accel(self);
-
-		g_free (self->priv);
-	}
-	self->priv = NULL;
-	if (parent_class->finalize)
-		(* parent_class->finalize)(object);
+    g_free (self->priv);
+  }
+  self->priv = NULL;
+  if (parent_class->finalize)
+    (* parent_class->finalize)(object);
 }
 
 /**
@@ -1037,24 +1012,24 @@ glade_xml_finalize(GObject *object)
  */
 static GtkWidget *
 default_custom_handler(GladeXML *xml, gchar *func_name, gchar *name,
-		       gchar *string1, gchar *string2, gint int1, gint int2,
-		       gpointer user_data)
+           gchar *string1, gchar *string2, gint int1, gint int2,
+           gpointer user_data)
 {
-	typedef GtkWidget *(* create_func)(gchar *name,
-					   gchar *string1, gchar *string2,
-					   gint int1, gint int2);
-	GModule *allsymbols;
-	create_func func;
+  typedef GtkWidget *(* create_func)(gchar *name,
+             gchar *string1, gchar *string2,
+             gint int1, gint int2);
+  GModule *allsymbols;
+  create_func func;
 
-	if (!g_module_supported()) {
-		g_error("custom_new requires gmodule to work correctly");
-		return NULL;
-	}
-	allsymbols = g_module_open(NULL, 0);
-	if (g_module_symbol(allsymbols, func_name, (gpointer)&func))
-		return (* func)(name, string1, string2, int1, int2);
-	g_warning("could not find widget creation function");
-	return NULL;
+  if (!g_module_supported()) {
+    g_error("custom_new requires gmodule to work correctly");
+    return NULL;
+  }
+  allsymbols = g_module_open(NULL, 0);
+  if (g_module_symbol(allsymbols, func_name, (gpointer)&func))
+    return (* func)(name, string1, string2, int1, int2);
+  g_warning("could not find widget creation function");
+  return NULL;
 }
 
 static GladeXMLCustomWidgetHandler custom_handler = default_custom_handler;
@@ -1062,10 +1037,10 @@ static gpointer custom_user_data = NULL;
 
 void
 glade_set_custom_handler(GladeXMLCustomWidgetHandler handler,
-			 gpointer user_data)
+       gpointer user_data)
 {
-	custom_handler = handler;
-	custom_user_data = user_data;
+  custom_handler = handler;
+  custom_user_data = user_data;
 }
 
 /**
@@ -1083,65 +1058,64 @@ glade_set_custom_handler(GladeXMLCustomWidgetHandler handler,
  */
 GtkWidget *
 glade_create_custom(GladeXML *xml, gchar *func_name, gchar *name,
-		    gchar *string1, gchar *string2, gint int1, gint int2)
+        gchar *string1, gchar *string2, gint int1, gint int2)
 {
-	return (* custom_handler)(xml, func_name, name, string1, string2,
-				  int1, int2, custom_user_data);
+  return (* custom_handler)(xml, func_name, name, string1, string2,
+          int1, int2, custom_user_data);
 }
 
-/**
- * glade_enum_from_string
- * @type: the GtkType for this flag or enum type.
- * @string: the string representation of the enum value.
- *
- * This helper routine is designed to be used by widget build routines to
- * convert the string representations of enumeration values found in the
- * XML descriptions to the integer values that can be used to configure
- * the widget.
- *
- * Returns: the integer value for this enumeration, or 0 if it couldn't be
- * found.
- */
-gint
-glade_enum_from_string (GtkType type, const char *string)
-{
-	GtkEnumValue *val = gtk_type_enum_find_value(type, string);
 
-	if (val)
-		return val->value;
-	else
-		return 0;
+gint
+glade_enum_from_string (GType type, const char *string)
+{
+    GEnumClass *eclass;
+    GEnumValue *ev;
+    gchar *endptr;
+    gint ret = 0;
+
+    ret = strtoul(string, &endptr, 0);
+    if (endptr != string) /* parsed a number */
+  return ret;
+
+    eclass = g_type_class_ref(type);
+    ev = g_enum_get_value_by_name(eclass, string);
+    if (!ev) ev = g_enum_get_value_by_nick(eclass, string);
+    if (ev)  ret = ev->value;
+
+    g_type_class_unref(eclass);
+
+    return ret;
 }
 
 static void
 glade_xml_build_interface(GladeXML *self, GladeWidgetTree *tree,
-			  const char *root)
+        const char *root)
 {
-	GList *tmp;
-	GladeWidgetInfo *wid;
-	GtkWidget *w;
+  GList *tmp;
+  GladeWidgetInfo *wid;
+  GtkWidget *w;
 
-	if (root) {
-		wid = g_hash_table_lookup(tree->names, root);
-		g_return_if_fail(wid != NULL);
-		w = glade_xml_build_widget(self, wid, NULL);
-		if (GTK_IS_WINDOW(w)) {
-		       if (self->priv->focus_widget)
-			   gtk_widget_grab_focus(self->priv->focus_widget);
-		       if (self->priv->default_widget)
-			   gtk_widget_grab_default(self->priv->default_widget);
-		}
-	} else {
-		/* build all toplevel nodes */
-		for (tmp = tree->widgets; tmp != NULL; tmp = tmp->next) {
-			wid = tmp->data;
-			glade_xml_build_widget(self, wid, NULL);
-		}
-		if (self->priv->focus_widget)
-			gtk_widget_grab_focus(self->priv->focus_widget);
-		if (self->priv->default_widget)
-			gtk_widget_grab_default(self->priv->default_widget);
-	}
+  if (root) {
+    wid = g_hash_table_lookup(tree->names, root);
+    g_return_if_fail(wid != NULL);
+    w = glade_xml_build_widget(self, wid, NULL);
+    if (GTK_IS_WINDOW(w)) {
+           if (self->priv->focus_widget)
+         gtk_widget_grab_focus(self->priv->focus_widget);
+           if (self->priv->default_widget)
+         gtk_widget_grab_default(self->priv->default_widget);
+    }
+  } else {
+    /* build all toplevel nodes */
+    for (tmp = tree->widgets; tmp != NULL; tmp = tmp->next) {
+      wid = tmp->data;
+      glade_xml_build_widget(self, wid, NULL);
+    }
+    if (self->priv->focus_widget)
+      gtk_widget_grab_focus(self->priv->focus_widget);
+    if (self->priv->default_widget)
+      gtk_widget_grab_default(self->priv->default_widget);
+  }
 }
 
 /* below are functions from glade-build.h */
@@ -1165,14 +1139,14 @@ static GHashTable *widget_table = NULL;
 void
 glade_register_widgets(const GladeWidgetBuildData *widgets)
 {
-	int i = 0;
+  int i = 0;
 
-	if (!widget_table)
-		widget_table = g_hash_table_new(g_str_hash, g_str_equal);
-	while (widgets[i].name != NULL) {
-		g_hash_table_insert(widget_table, widgets[i].name, (gpointer)&widgets[i]);
-		i++;
-	}
+  if (!widget_table)
+    widget_table = g_hash_table_new(g_str_hash, g_str_equal);
+  while (widgets[i].name != NULL) {
+    g_hash_table_insert(widget_table, widgets[i].name, (gpointer)&widgets[i]);
+    i++;
+  }
 }
 
 #ifndef ENABLE_NLS
@@ -1226,44 +1200,44 @@ glade_register_widgets(const GladeWidgetBuildData *widgets)
  */
 GtkWidget *
 glade_xml_build_widget(GladeXML *self, GladeWidgetInfo *info,
-		       const char *parent_long)
+           const char *parent_long)
 {
-	GladeWidgetBuildData *data;
-	GtkWidget *ret;
+  GladeWidgetBuildData *data;
+  GtkWidget *ret;
 
-	debug(g_message("Widget class: %s (for parent %s)", info->class,
-			parent_long?parent_long:"(null)"));
-	if (!strcmp(info->class, "Placeholder")) {
-		g_warning("placeholders exist in interface description");
-		ret = gtk_label_new("[placeholder]");
-		gtk_widget_show(ret);
-		return ret;
-	}
-	data = g_hash_table_lookup(widget_table, info->class);
-	if (data == NULL) {
-		if (glade_xml_build_extended_widget) {
-			char *err = NULL;
+  debug(g_message("Widget class: %s (for parent %s)", info->class,
+      parent_long?parent_long:"(null)"));
+  if (!strcmp(info->class, "Placeholder")) {
+    g_warning("placeholders exist in interface description");
+    ret = gtk_label_new("[placeholder]");
+    gtk_widget_show(ret);
+    return ret;
+  }
+  data = g_hash_table_lookup(widget_table, info->class);
+  if (data == NULL) {
+    if (glade_xml_build_extended_widget) {
+      char *err = NULL;
 
-			ret = glade_xml_build_extended_widget(self, info, &err);
-			if (!ret) {
-				g_warning("%s", err);
-				ret = gtk_label_new(err);
-				g_free(err);
-				gtk_widget_show(ret);
-			}
-		} else {
-			char buf[50];
-			g_warning("unknown widget class '%s'", info->class);
-			g_snprintf(buf, 49, "[a %s]", info->class);
-			ret = gtk_label_new(buf);
-			gtk_widget_show(ret);
-		}
-	} else {
-		g_assert(data->new);
-		ret = data->new(self, info);
-	}
-	glade_xml_set_common_params(self, ret, info, parent_long);
-	return ret;
+      ret = glade_xml_build_extended_widget(self, info, &err);
+      if (!ret) {
+        g_warning("%s", err);
+        ret = gtk_label_new(err);
+        g_free(err);
+        gtk_widget_show(ret);
+      }
+    } else {
+      char buf[50];
+      g_warning("unknown widget class '%s'", info->class);
+      g_snprintf(buf, 49, "[a %s]", info->class);
+      ret = gtk_label_new(buf);
+      gtk_widget_show(ret);
+    }
+  } else {
+    g_assert(data->new);
+    ret = data->new(self, info);
+  }
+  glade_xml_set_common_params(self, ret, info, parent_long);
+  return ret;
 }
 
 /**
@@ -1281,124 +1255,78 @@ glade_xml_build_widget(GladeXML *self, GladeWidgetInfo *info,
  */
 void
 glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
-			    GladeWidgetInfo *info, const char *parent_long)
+          GladeWidgetInfo *info, const char *parent_long)
 {
-	GList *tmp;
-	GladeWidgetBuildData *data;
-	char *w_longname;
-	gint *width, *height;
+  GList *tmp;
+  GladeWidgetBuildData *data;
+  char *w_longname;
+  gint *width, *height;
 
-	/* get the build data */
-	if (!widget_table)
-		widget_table = g_hash_table_new(g_str_hash, g_str_equal);
-	data = g_hash_table_lookup(widget_table, info->class);
-	glade_xml_add_signals(self, widget, info);
-	glade_xml_add_accels(self, widget, info);
+  /* get the build data */
+  if (!widget_table)
+    widget_table = g_hash_table_new(g_str_hash, g_str_equal);
+  data = g_hash_table_lookup(widget_table, info->class);
+  glade_xml_add_signals(self, widget, info);
+  glade_xml_add_accels(self, widget, info);
 
-	for (tmp = self->priv->focus_ulines; tmp; tmp = tmp->next) {
-		GladeFocusULine *uline = tmp->data;
+  for (tmp = self->priv->focus_ulines; tmp; tmp = tmp->next) {
+    GladeFocusULine *uline = tmp->data;
 
-		if (!strcmp(uline->widget_name, info->name)) {
-			/* it is for us ... */
-			gtk_widget_add_accelerator(widget, "grab_focus",
-						glade_xml_ensure_accel(self),
-						uline->key, GDK_MOD1_MASK, 0);
-			tmp = tmp->next;
-			self->priv->focus_ulines =
-				g_list_remove(self->priv->focus_ulines, uline);
-			g_free(uline);
-		}
-		if (!tmp)
-			break;
-	}
+    if (!strcmp(uline->widget_name, info->name)) {
+      /* it is for us ... */
+      gtk_widget_add_accelerator(widget, "grab_focus",
+            glade_xml_ensure_accel(self),
+            uline->key, GDK_MOD1_MASK, 0);
+      tmp = tmp->next;
+      self->priv->focus_ulines =
+        g_list_remove(self->priv->focus_ulines, uline);
+      g_free(uline);
+    }
+    if (!tmp)
+      break;
+  }
 
-	gtk_widget_set_name(widget, info->name);
-	if (info->tooltip) {
-		gtk_tooltips_set_tip(self->priv->tooltips,
-				     widget,
-				     glade_xml_gettext(self, info->tooltip),
-				     NULL);
-	}
+  gtk_widget_set_name(widget, info->name);
 
-	gtk_widget_set_usize(widget, info->width, info->height);
-	width = g_malloc(sizeof(gint));
-	height = g_malloc(sizeof(gint));
-	*width = info->width;
-	*height = info->height;
-	g_object_set_data(G_OBJECT(widget),"width",width);
-	g_object_set_data(G_OBJECT(widget),"height",height);
-	if (info->border_width > 0)
-		gtk_container_set_border_width(GTK_CONTAINER(widget),
-					       info->border_width);
-	gtk_widget_set_sensitive(widget, info->sensitive);
-	if (info->can_default)
-		GTK_WIDGET_SET_FLAGS(widget, GTK_CAN_DEFAULT);
-	if (info->can_focus)
-		GTK_WIDGET_SET_FLAGS(widget, GTK_CAN_FOCUS);
-	else
-		GTK_WIDGET_UNSET_FLAGS(widget, GTK_CAN_FOCUS);
-	if (info->has_default)
-		self->priv->default_widget = widget;
-	if (info->has_focus)
-		self->priv->focus_widget = widget;
+  gtk_widget_set_size_request(widget, info->width, info->height);
+  width = g_malloc(sizeof(gint));
+  height = g_malloc(sizeof(gint));
+  *width = info->width;
+  *height = info->height;
+  g_object_set_data(G_OBJECT(widget),"width",width);
+  g_object_set_data(G_OBJECT(widget),"height",height);
+  if (info->border_width > 0)
+    gtk_container_set_border_width(GTK_CONTAINER(widget),
+                 info->border_width);
+  gtk_widget_set_sensitive(widget, info->sensitive);
+  gtk_widget_set_can_default(widget,info->can_default);
+  gtk_widget_set_can_focus(widget,info->can_focus);
+  if (info->has_default)
+    self->priv->default_widget = widget;
+  if (info->has_focus)
+    self->priv->focus_widget = widget;
 
-#if 0
-	for (tmp = info->attributes; tmp != NULL; tmp = tmp->next) {
-		GladeAttribute *attr = tmp->data;
+  if (parent_long)
+    w_longname = g_strconcat(parent_long, ".", info->name, NULL);
+  else
+    w_longname = g_strdup(info->name);
+  /* store this information as data of the widget.  w_longname is owned by
+   * the widget now */
+  g_object_set_data(G_OBJECT(widget), glade_xml_tag, self);
+  g_object_set_data(G_OBJECT(widget), glade_xml_name_tag,info->name);
+  g_object_set_data_full(G_OBJECT(widget), glade_xml_longname_tag,
+         w_longname, (GDestroyNotify)g_free);
+  /* store widgets in hash table, for easy lookup */
+  g_hash_table_insert(self->priv->name_hash, info->name, widget);
+  g_hash_table_insert(self->priv->longname_hash, w_longname, widget);
 
-		if (!strcmp(attr->name, "events")) {
-			char *tmpptr, *endptr;
-			long events = strtol(attr->value, &endptr, 0);
+  if (info->style)
+    glade_style_attach(widget, info->style->name);
 
-			/* format conversion error */
-			if (attr->value == endptr) {
-				events = 0;
-				tmpptr = attr->value;
-				while ((endptr = strchr(tmpptr, ' '))) {
-					char *str = g_strndup(tmpptr,
-							      endptr-tmpptr);
-					events |= glade_enum_from_string(
-						GTK_TYPE_GDK_EVENT_MASK, str);
-					g_free(str);
-					tmpptr = endptr;
-					while (tmpptr[0] == ' ' ||
-					       tmpptr[0] == '|')
-						tmpptr++;
-				}
-				events |= glade_enum_from_string(
-					GTK_TYPE_GDK_EVENT_MASK, tmpptr);
-			}
-			gtk_widget_set_events(widget, events);
-		} else if (!strcmp(attr->name, "extension_events")) {
-			GdkExtensionMode ex =
-			    glade_enum_from_string(GTK_TYPE_GDK_EXTENSION_MODE,
-						   attr->value);
-			gtk_widget_set_extension_events(widget, ex);
-		}
-	}
-#endif
-
-	if (parent_long)
-		w_longname = g_strconcat(parent_long, ".", info->name, NULL);
-	else
-		w_longname = g_strdup(info->name);
-	/* store this information as data of the widget.  w_longname is owned by
-	 * the widget now */
-	g_object_set_data(G_OBJECT(widget), glade_xml_tag, self);
-	g_object_set_data(G_OBJECT(widget), glade_xml_name_tag,info->name);
-	g_object_set_data_full(G_OBJECT(widget), glade_xml_longname_tag,
-				 w_longname, (GtkDestroyNotify)g_free);
-	/* store widgets in hash table, for easy lookup */
-	g_hash_table_insert(self->priv->name_hash, info->name, widget);
-	g_hash_table_insert(self->priv->longname_hash, w_longname, widget);
-
-	if (info->style)
-		glade_style_attach(widget, info->style->name);
-
-	if (data && data->build_children && info->children)
-		data->build_children(self, widget, info, w_longname);
-	if (info->visible)
-		gtk_widget_show(widget);
+  if (data && data->build_children && info->children)
+    data->build_children(self, widget, info, w_longname);
+  if (info->visible)
+    gtk_widget_show(widget);
 }
 
 /**
@@ -1415,15 +1343,15 @@ glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
  */
 void
 glade_standard_build_children(GladeXML *self, GtkWidget *w,
-			      GladeWidgetInfo *info, const char *longname)
+            GladeWidgetInfo *info, const char *longname)
 {
-	GList *tmp;
+  GList *tmp;
 
-	for (tmp = info->children; tmp != NULL; tmp = tmp->next) {
-		GtkWidget *child = glade_xml_build_widget(self, tmp->data,
-							  longname);
-		gtk_container_add(GTK_CONTAINER(w), child);
-	}
+  for (tmp = info->children; tmp != NULL; tmp = tmp->next) {
+    GtkWidget *child = glade_xml_build_widget(self, tmp->data,
+                longname);
+    gtk_container_add(GTK_CONTAINER(w), child);
+  }
 }
 
 /**
@@ -1437,43 +1365,43 @@ glade_standard_build_children(GladeXML *self, GtkWidget *w,
 GtkAdjustment *
 glade_get_adjustment(GladeWidgetInfo *info)
 {
-	GList *tmp;
-	gdouble hvalue=1, hlower=0, hupper=100, hstep=1, hpage=100, hpage_size=10;
+  GList *tmp;
+  gdouble hvalue=1, hlower=0, hupper=100, hstep=1, hpage=100, hpage_size=10;
 
-	for (tmp = info->attributes; tmp != NULL; tmp = tmp->next) {
-		GladeAttribute *attr = tmp->data;
-		gchar *name = attr->name;
+  for (tmp = info->attributes; tmp != NULL; tmp = tmp->next) {
+    GladeAttribute *attr = tmp->data;
+    gchar *name = attr->name;
 
-		if (name[0] == 'h')
-			name++;
+    if (name[0] == 'h')
+      name++;
 
-		switch (name[0]) {
-		case 'l':
-			if (!strcmp(name, "lower"))
-				hlower = g_strtod(attr->value, NULL);
-			break;
-		case 'p':
-			if (!strcmp(name, "page"))
-				hpage = g_strtod(attr->value, NULL);
-			else if (!strcmp(name, "page_size"))
-				hpage_size=g_strtod(attr->value, NULL);
-			break;
-		case 's':
-			if (!strcmp(name, "step"))
-				hstep = g_strtod(attr->value, NULL);
-			break;
-		case 'u':
-			if (!strcmp(name, "upper"))
-				hupper = g_strtod(attr->value, NULL);
-			break;
-		case 'v':
-			if (!strcmp(name, "value"))
-				hvalue = g_strtod(attr->value, NULL);
-			break;
-		}
-	}
-	return GTK_ADJUSTMENT (gtk_adjustment_new(hvalue, hlower, hupper,
-						  hstep, hpage, hpage_size));
+    switch (name[0]) {
+    case 'l':
+      if (!strcmp(name, "lower"))
+        hlower = g_strtod(attr->value, NULL);
+      break;
+    case 'p':
+      if (!strcmp(name, "page"))
+        hpage = g_strtod(attr->value, NULL);
+      else if (!strcmp(name, "page_size"))
+        hpage_size=g_strtod(attr->value, NULL);
+      break;
+    case 's':
+      if (!strcmp(name, "step"))
+        hstep = g_strtod(attr->value, NULL);
+      break;
+    case 'u':
+      if (!strcmp(name, "upper"))
+        hupper = g_strtod(attr->value, NULL);
+      break;
+    case 'v':
+      if (!strcmp(name, "value"))
+        hvalue = g_strtod(attr->value, NULL);
+      break;
+    }
+  }
+  return GTK_ADJUSTMENT (gtk_adjustment_new(hvalue, hlower, hupper,
+              hstep, hpage, hpage_size));
 }
 
 /**
@@ -1489,77 +1417,67 @@ glade_get_adjustment(GladeWidgetInfo *info)
 void
 glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
 {
-	GList *tmp;
-	gboolean allow_grow = window->allow_grow;
-	gboolean allow_shrink = window->allow_shrink;
+  GList *tmp;
+  gboolean allow_grow;
 
-	gchar *wmname = NULL, *wmclass = NULL;
-	gint width;
-	gint height;
+  gchar *wmname = NULL, *wmclass = NULL;
+  gint width,height;
     
-	gtk_window_get_default_size(window, &width, &height);
+  gtk_window_get_default_size(window, &width, &height);
 
-	for (tmp = info->attributes; tmp != NULL; tmp = tmp->next) {
-		GladeAttribute *attr = tmp->data;
+  for (tmp = info->attributes; tmp != NULL; tmp = tmp->next) {
+    GladeAttribute *attr = tmp->data;
 
-		switch (attr->name[0]) {
-		case 'a':
-			if (!strcmp(attr->name, "allow_grow"))
-				allow_grow = attr->value[0] == 'T';
-			else if (!strcmp(attr->name, "allow_shrink"))
-				allow_shrink = attr->value[0] == 'T';
-			else if (!strcmp(attr->name, "auto_shrink"))
-				// do nothing
-			break;
-		case 'd':
-			if (!strcmp(attr->name, "default_height"))
-				height = strtol(attr->value, NULL, 0);
-			else if (!strcmp(attr->name, "default_width"))
-				width = strtol(attr->value, NULL, 0);
-			break;
-		case 'm':
-			if (!strcmp(attr->name, "modal"))
-				gtk_window_set_modal(window,
-						     attr->value[0] == 'T');
-			break;
-		case 'p':
-			if (!strcmp(attr->name, "position"))
-				gtk_window_set_position(window,
-					glade_enum_from_string(
-						GTK_TYPE_WINDOW_POSITION,
-						attr->value));
-			break;
-		case 'w':
-			if (!strcmp(attr->name, "wmclass_name"))
-				wmname = attr->value;
-			else if (!strcmp(attr->name, "wmclass_class"))
-				wmclass = attr->value;
-			break;
-		case 'x':
-			if (attr->name[1] == '\0') {
-				gtk_widget_set_uposition(GTK_WIDGET(window),
-					strtol(attr->value, NULL, 0), -2);
-				gint *x = g_malloc(sizeof(gint));
-				*x = strtol(attr->value, NULL, 0);
-				g_object_set_data(G_OBJECT(window),"x",x);
-			}
-			break;
-		case 'y':
-			if (attr->name[1] == '\0') {
-				gtk_widget_set_uposition(GTK_WIDGET(window),
-					-2, strtol(attr->value, NULL, 0));
-				gint *y = g_malloc(sizeof(gint));
-				*y = strtol(attr->value, NULL, 0);
-				g_object_set_data(G_OBJECT(window),"y",y);
-			}
-			break;
-		}
-	}
-	gtk_window_set_default_size(window, width, height);
- 	gtk_window_set_resizable(window, allow_grow);
+    switch (attr->name[0]) {
+    case 'a':
+      if (!strcmp(attr->name, "allow_grow"))
+        allow_grow = attr->value[0] == 'T';
+      else if (!strcmp(attr->name, "allow_shrink"))
+        // do nothing
+      break;
+    case 'd':
+      if (!strcmp(attr->name, "default_height"))
+        height = strtol(attr->value, NULL, 0);
+      else if (!strcmp(attr->name, "default_width"))
+        width = strtol(attr->value, NULL, 0);
+      break;
+    case 'm':
+      if (!strcmp(attr->name, "modal"))
+        gtk_window_set_modal(window,
+                 attr->value[0] == 'T');
+      break;
+    case 'p':
+      if (!strcmp(attr->name, "position"))
+        gtk_window_set_position(window,
+          glade_enum_from_string(
+            GTK_TYPE_WINDOW_POSITION,
+            attr->value));
+      break;
+    case 'w':
+      if (!strcmp(attr->name, "wmclass_name"))
+        wmname = attr->value;
+      else if (!strcmp(attr->name, "wmclass_class"))
+        wmclass = attr->value;
+      break;
+    case 'x':
+      if (attr->name[1] == '\0') {
+        g_object_set_data(G_OBJECT(window),"x",
+          GINT_TO_POINTER(strtol(attr->value, NULL, 0)));
+      }
+      break;
+    case 'y':
+      if (attr->name[1] == '\0') {
+        g_object_set_data(G_OBJECT(window),"y",
+          GINT_TO_POINTER(strtol(attr->value, NULL, 0)));
+      }
+      break;
+    }
+  }
+  gtk_window_set_default_size(window, width, height);
+  gtk_window_set_resizable(window, allow_grow);
 
-	if (wmname != NULL || wmclass != NULL)
-		gtk_window_set_wmclass(window,
-				       wmname  ? wmname  : "",
-				       wmclass ? wmclass : "");
+  if (wmname != NULL || wmclass != NULL)
+    gtk_window_set_wmclass(window,
+               wmname  ? wmname  : "",
+               wmclass ? wmclass : "");
 }

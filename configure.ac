@@ -1,16 +1,10 @@
 -*- mode: autoconf -*-
 AC_PREREQ(2.52)
-AC_INIT(libglade-panda, 2.0.3)
+AC_INIT(libglade-panda, 3.0.0)
 AM_INIT_AUTOMAKE
 AC_CANONICAL_HOST
 AM_MAINTAINER_MODE
 
-m4_define([required_libxml_version],   [2.4.10])
-m4_define([required_glib_version],     [2.5.0])
-m4_define([required_gmodule_version],  [2.0.0])
-m4_define([required_atk_version],      [1.9.0])
-m4_define([required_gtk_version],      [2.5.0])
-m4_define([required_gtkpanda_version], [1.9.0])
 
 AC_CONFIG_SRCDIR([glade/glade.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -41,8 +35,6 @@ AC_ISC_POSIX
 AC_HEADER_STDC
 AC_PROG_LIBTOOL
 
-AM_PATH_GTK_2_0(required_gtk_version)
-
 save_LIBS=$LIBS
 LIBS="$GTK_LIBS $LIBS"
 AC_CHECK_FUNC(gtk_plug_get_type,
@@ -50,26 +42,15 @@ AC_CHECK_FUNC(gtk_plug_get_type,
 LIBS=$save_LIBS
 
 PKG_CHECK_MODULES(LIBGLADE_PANDA, [dnl
-  libxml-2.0 >= required_libxml_version dnl
-  atk >= required_atk_version dnl
-  gtk+-2.0 >= required_gtk_version dnl
-  glib-2.0 >= required_glib_version dnl
-  gmodule-2.0 >= required_gmodule_version dnl
-  gtkpanda2 >= required_gtkpanda_version dnl]
+  libxml-2.0 >= 2.4.10 dnl
+  gtkpanda2 >= 3.0.0 dnl]
   )
 AC_DEFINE([USE_PANDA], 1 , "")
-
-AM_GNU_GETTEXT
-AM_GNU_GETTEXT_VERSION(0.16.1)
 
 AC_CONFIG_FILES([ 
 Makefile
 glade/Makefile
-intl/Makefile
-po/Makefile.in
 test/Makefile
-test/basic/Makefile
-test/gtkpanda/Makefile
 libglade-panda-2.0.pc
 ])
 

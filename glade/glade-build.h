@@ -23,11 +23,7 @@
 #define GLADE_BUILD_H
 
 #include <glade/glade-xml.h>
-#include <gtk/gtktypeutils.h>
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkaccelgroup.h>
-#include <gtk/gtkadjustment.h>
+#include <gtk/gtk.h>
 
 #include <glade/glade-widget-tree.h>
 
@@ -101,7 +97,7 @@ GtkAdjustment *glade_get_adjustment(GladeWidgetInfo *info);
 
 /* this is a wrapper for gtk_type_enum_find_value, that just returns the
  * integer value for the enum */
-gint glade_enum_from_string(GtkType type, const char *string);
+gint glade_enum_from_string(GType type, const char *string);
 
 /* a wrapper for gettext */
 char *glade_xml_gettext(GladeXML *xml, const char *msgid);

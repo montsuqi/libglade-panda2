@@ -23,9 +23,7 @@
 #define GLADE_XML_H
 
 #include <glib.h>
-//#include <gtk/gtkdata.h>
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktooltips.h>
+#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 extern "C" {

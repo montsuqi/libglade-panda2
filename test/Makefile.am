@@ -5,5 +5,3 @@ test_libglade_panda_LDADD = \
 test_libglade_panda_SOURCES = test-libglade-panda.c
 
 noinst_PROGRAMS = test-libglade-panda
-
-SUBDIRS = 	basic gtkpanda
