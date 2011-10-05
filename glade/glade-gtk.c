@@ -367,8 +367,7 @@ panda_combo_build_children (GladeXML *xml, GtkWidget *w,
     } else if (!strcmp(attr->name, "text_visible")) {
       gtk_entry_set_visibility(entry, attr->value[0] == 'T');
     } else if (!strcmp(attr->name, "text_max_length")) {
-      gtk_entry_set_max_length(entry, strtol(attr->value,
-                     NULL, 0));
+      gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
     } else if (!strcmp(attr->name, "text")) {
       gtk_entry_set_text(entry, attr->value);
     }
@@ -419,12 +418,13 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
   guint key;
   gchar *focus_target = NULL;
   gboolean wrap = FALSE;
+  char *str;
 
   for (tmp = info->attributes; tmp; tmp = tmp->next) {
     GladeAttribute *attr = tmp->data;
 
     if (!strcmp(attr->name, "label")) {
-      // do nothing
+      str = attr->value;
     } else if (!strcmp(attr->name, "justify")) {
       // do nothing
     } else if (!strcmp(attr->name, "default_focus_target")) {
@@ -435,7 +435,7 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
       wrap = attr->value[0] == 'T';
   }
 
-  label = gtk_label_new("");
+  label = gtk_label_new(str!=NULL?str:"");
   key = 0;
   
   if (key)
@@ -734,12 +734,28 @@ panda_print_new(GladeXML *xml, GladeWidgetInfo *info)
 }
 #endif
 
+static void
+set_button_label(GtkWidget *widget, GladeWidgetInfo *info)
+{
+  GList *tmp;
+
+  for (tmp = info->attributes; tmp; tmp = tmp->next) {
+    GladeAttribute *attr = tmp->data;
+    if (!strcmp(attr->name, "label")) {
+      if (attr->value != NULL) {
+        gtk_button_set_label(GTK_BUTTON(widget),attr->value);
+      }
+    }
+  }
+}
+
 static GtkWidget *
 button_new(GladeXML *xml, GladeWidgetInfo *info)
 {
   GtkWidget *button;
-  
   button = gtk_button_new();
+  set_button_label(button,info);
+
   return button;
 }
 
@@ -760,6 +776,7 @@ togglebutton_new(GladeXML *xml, GladeWidgetInfo *info)
     }
   }
   button = gtk_toggle_button_new();
+  set_button_label(button,info);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), active);
   return button;
 }
@@ -783,7 +800,7 @@ checkbutton_new (GladeXML *xml, GladeWidgetInfo *info)
     }
   }
   button = gtk_check_button_new();
-
+  set_button_label(button,info);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), active);
   gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(button), draw_indicator);
   return button;
@@ -825,7 +842,7 @@ radiobutton_new(GladeXML *xml, GladeWidgetInfo *info)
              group_name,
              (gpointer)gtk_radio_button_get_group(radio));
   } 
-
+  set_button_label(button,info);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), active);
   gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON(button), draw_indicator);
   return button;

@@ -54,8 +54,8 @@ static GladeWidgetTree *glade_widget_tree_new(void) {
 static GladeWidgetInfo *glade_widget_info_new(void) {
     GladeWidgetInfo *info = g_new0(GladeWidgetInfo, 1);
 
-    info->width = -2;
-    info->height = -2;
+    info->width = -1;
+    info->height = -1;
     info->border_width = -1;
     info->visible = TRUE;
     info->sensitive = TRUE;

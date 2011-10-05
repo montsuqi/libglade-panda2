@@ -1260,7 +1260,6 @@ glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
   GList *tmp;
   GladeWidgetBuildData *data;
   char *w_longname;
-  gint *width, *height;
 
   /* get the build data */
   if (!widget_table)
@@ -1288,13 +1287,16 @@ glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
 
   gtk_widget_set_name(widget, info->name);
 
+  if (info->width < -1) {
+    info->width = -1;
+  }
+  if (info->height < -1) {
+    info->height = -1;
+  }
   gtk_widget_set_size_request(widget, info->width, info->height);
-  width = g_malloc(sizeof(gint));
-  height = g_malloc(sizeof(gint));
-  *width = info->width;
-  *height = info->height;
-  g_object_set_data(G_OBJECT(widget),"width",width);
-  g_object_set_data(G_OBJECT(widget),"height",height);
+  gtk_widget_queue_resize(widget);
+  g_object_set_data(G_OBJECT(widget),"width",GINT_TO_POINTER(info->width));
+  g_object_set_data(G_OBJECT(widget),"height",GINT_TO_POINTER(info->height));
   if (info->border_width > 0)
     gtk_container_set_border_width(GTK_CONTAINER(widget),
                  info->border_width);
