@@ -1456,10 +1456,12 @@ glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
             attr->value));
       break;
     case 'w':
-      if (!strcmp(attr->name, "wmclass_name"))
-        wmname = attr->value;
-      else if (!strcmp(attr->name, "wmclass_class"))
-        wmclass = attr->value;
+      if (!strcmp(attr->name, "wmclass_name")) {
+        if (attr->value != NULL &&
+            strstr(attr->value,"dialog") {
+          g_object_set_data(G_OBJECT(window),"IS_DIALOG",window);
+        }
+      }
       break;
     case 'x':
       if (attr->name[1] == '\0') {

@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: Libglade-panda
 Description: a library for dynamically loading GLADE interface files
 Version: @VERSION@
-Requires: gtk+-2.0 libxml-2.0 gtkpanda2
+Requires: libxml-2.0 gtkpanda2
 Libs: -L${libdir} -lglade-panda-2.0 @LIBGLADE_PANDA_LIBS@
 Cflags: -I${includedir}/libglade-panda-2.0 @LIBGLADE_PANDA_CFLAGS@
