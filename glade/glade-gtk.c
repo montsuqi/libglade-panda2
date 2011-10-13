@@ -417,7 +417,6 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
   GtkWidget *label;
   guint key;
   gchar *focus_target = NULL;
-  gboolean wrap = FALSE;
   char *str;
 
   for (tmp = info->attributes; tmp; tmp = tmp->next) {
@@ -429,10 +428,11 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
       // do nothing
     } else if (!strcmp(attr->name, "default_focus_target")) {
       if (!focus_target) focus_target = attr->value;
-    } else if (!strcmp(attr->name, "focus_target"))
+    } else if (!strcmp(attr->name, "focus_target")) {
       focus_target = attr->value;
-    else if (!strcmp(attr->name, "wrap"))
-      wrap = attr->value[0] == 'T';
+    } else if (!strcmp(attr->name, "wrap")) {
+      // do nothing
+    }
   }
 
   label = gtk_label_new(str!=NULL?str:"");
@@ -440,8 +440,6 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
   
   if (key)
     glade_xml_handle_label_accel(xml, focus_target, key);
-  if (wrap)
-    gtk_label_set_line_wrap(GTK_LABEL(label), wrap);
   if (GTK_IS_MISC(label))
     misc_set (GTK_MISC(label), info);
   return label;
