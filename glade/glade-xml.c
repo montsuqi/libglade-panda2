@@ -1286,7 +1286,6 @@ glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
 	GList *tmp;
 	GladeWidgetBuildData *data;
 	char *w_longname;
-	gint *width, *height;
 
 	/* get the build data */
 	if (!widget_table)
@@ -1321,12 +1320,8 @@ glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
 	}
 
 	gtk_widget_set_usize(widget, info->width, info->height);
-	width = g_malloc(sizeof(gint));
-	height = g_malloc(sizeof(gint));
-	*width = info->width;
-	*height = info->height;
-	g_object_set_data(G_OBJECT(widget),"width",width);
-	g_object_set_data(G_OBJECT(widget),"height",height);
+	g_object_set_data(G_OBJECT(widget),"width",GINT_TO_POINTER(info->width));
+	g_object_set_data(G_OBJECT(widget),"height",GINT_TO_POINTER(info->height));
 	if (info->border_width > 0)
 		gtk_container_set_border_width(GTK_CONTAINER(widget),
 					       info->border_width);
@@ -1539,18 +1534,16 @@ glade_xml_set_window_props(GtkWindow *window, GladeWidgetInfo *info)
 			if (attr->name[1] == '\0') {
 				gtk_widget_set_uposition(GTK_WIDGET(window),
 					strtol(attr->value, NULL, 0), -2);
-				gint *x = g_malloc(sizeof(gint));
-				*x = strtol(attr->value, NULL, 0);
-				g_object_set_data(G_OBJECT(window),"x",x);
+				g_object_set_data(G_OBJECT(window),"x",
+					GINT_TO_POINTER(strtol(attr->value, NULL, 0)));
 			}
 			break;
 		case 'y':
 			if (attr->name[1] == '\0') {
 				gtk_widget_set_uposition(GTK_WIDGET(window),
 					-2, strtol(attr->value, NULL, 0));
-				gint *y = g_malloc(sizeof(gint));
-				*y = strtol(attr->value, NULL, 0);
-				g_object_set_data(G_OBJECT(window),"y",y);
+				g_object_set_data(G_OBJECT(window),"y",
+					GINT_TO_POINTER(strtol(attr->value, NULL, 0)));
 			}
 			break;
 		}
