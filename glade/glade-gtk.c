@@ -458,7 +458,6 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
 	if (GTK_IS_MISC(label))
 		misc_set (GTK_MISC(label), info);
 
-	fprintf(stderr,"use-markup on\n");
 	g_object_set(label,"use-markup",TRUE,NULL);
 
 	return label;
