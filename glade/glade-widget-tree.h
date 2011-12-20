@@ -62,7 +62,7 @@ struct _GladeWidgetInfo {
     gchar *name;
     gchar *tooltip;
 
-    gint width, height;
+    gint width, height,x,y;
     gint border_width;
 
     /* bit field */

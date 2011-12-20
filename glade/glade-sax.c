@@ -56,6 +56,8 @@ static GladeWidgetInfo *glade_widget_info_new(void) {
 
     info->width = -2;
     info->height = -2;
+    info->x = -1;
+    info->y = -1;
     info->border_width = -1;
     info->visible = TRUE;
     info->sensitive = TRUE;
@@ -388,6 +390,10 @@ static void gladeEndElement(GladeParseState *state, const char *name) {
 	    state->widget->width = strtol(state->content->str, NULL, 0);
 	else if (!strcmp(name, "height"))
 	    state->widget->height = strtol(state->content->str, NULL, 0);
+	else if (!strcmp(name, "x"))
+	    state->widget->x = strtol(state->content->str, NULL, 0);
+	else if (!strcmp(name, "y"))
+	    state->widget->y = strtol(state->content->str, NULL, 0);
 	else if (!strcmp(name, "visible"))
 	    state->widget->visible = (state->content->str[0] == 'T');
 	else if (!strcmp(name, "sensitive"))
