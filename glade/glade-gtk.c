@@ -1012,13 +1012,17 @@ panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
 	GList *tmp;
 
 	table = gtk_panda_table_new();
-
 	for (tmp = info->attributes; tmp; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
 		if (!strcmp(attr->name, "columns")) {
 			gtk_panda_table_set_columns(
 				GTK_PANDA_TABLE(table), atoi(attr->value));
-		} else if (!strcmp(attr->name, "column_types")) {
+		}
+	}
+
+	for (tmp = info->attributes; tmp; tmp = tmp->next) {
+		GladeAttribute *attr = tmp->data;
+		if (!strcmp(attr->name, "column_types")) {
 			gtk_panda_table_set_types(GTK_PANDA_TABLE(table), 
 				attr->value);
 		} else if (!strcmp(attr->name, "column_titles")) {
