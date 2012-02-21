@@ -1360,6 +1360,18 @@ window_new (GladeXML *xml, GladeWidgetInfo *info)
 }
 
 static GtkWidget *
+filechooserbutton_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+    GtkWidget *wid;
+
+    wid = gtk_file_chooser_button_new("",GTK_FILE_CHOOSER_ACTION_OPEN);
+	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(wid),
+		false);
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(wid),"");
+    return wid;
+}
+
+static GtkWidget *
 pixmap_new(GladeXML *xml, GladeWidgetInfo *info)
 {
 	GtkWidget *wid;
@@ -1484,9 +1496,10 @@ static const GladeWidgetBuildData widget_data[] = {
 	{"GtkViewport",			viewport_new,		glade_standard_build_children},
 	{"GtkCalendar",			calendar_new,		NULL},
 	{"GtkWindow",			window_new,			window_build_children},
+	{"GtkFileChooserButton",	filechooserbutton_new,		NULL},
 /* Gnome widgets in previouse version */
-	{"GnomePixmap",			pixmap_new,			NULL},
-	{"GnomeFileEntry",		file_entry_new,		file_entry_build_children},
+	{"GnomePixmap",		 	pixmap_new,			NULL},
+	{"GnomeFileEntry",	 	file_entry_new,		file_entry_build_children},
 	{NULL,NULL,NULL}
 };
 
