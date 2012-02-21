@@ -1365,8 +1365,6 @@ filechooserbutton_new(GladeXML *xml, GladeWidgetInfo *info)
     GtkWidget *wid;
 
     wid = gtk_file_chooser_button_new("",GTK_FILE_CHOOSER_ACTION_OPEN);
-	gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(wid),
-		false);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(wid),"");
     return wid;
 }
