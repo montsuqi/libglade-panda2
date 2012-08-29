@@ -1370,6 +1370,29 @@ filechooserbutton_new(GladeXML *xml, GladeWidgetInfo *info)
 }
 
 static GtkWidget *
+colorbutton_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+	GList *tmp;
+	char *title = NULL;
+    GtkWidget *wid;
+	GdkColor color;
+
+    wid = gtk_color_button_new();
+
+	for (tmp = info->attributes; tmp; tmp = tmp->next) {
+		GladeAttribute *attr = tmp->data;
+
+		if (!strcmp(attr->name, "title")) {
+			gtk_color_button_set_title(GTK_COLOR_BUTTON(wid),attr->value);
+		} else if (!strcmp(attr->name, "color")) {
+			gdk_color_parse(attr->value,&color);
+			gtk_color_button_set_color(GTK_COLOR_BUTTON(wid),&color);
+		}
+	}
+    return wid;
+}
+
+static GtkWidget *
 pixmap_new(GladeXML *xml, GladeWidgetInfo *info)
 {
 	GtkWidget *wid;
@@ -1494,7 +1517,8 @@ static const GladeWidgetBuildData widget_data[] = {
 	{"GtkViewport",			viewport_new,		glade_standard_build_children},
 	{"GtkCalendar",			calendar_new,		NULL},
 	{"GtkWindow",			window_new,			window_build_children},
-	{"GtkFileChooserButton",	filechooserbutton_new,		NULL},
+	{"GtkFileChooserButton",filechooserbutton_new,		NULL},
+	{"GtkColorButton",		colorbutton_new,	NULL},
 /* Gnome widgets in previouse version */
 	{"GnomePixmap",		 	pixmap_new,			NULL},
 	{"GnomeFileEntry",	 	file_entry_new,		file_entry_build_children},
