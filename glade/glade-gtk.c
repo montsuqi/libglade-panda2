@@ -199,6 +199,8 @@ fixed_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 
 		g_object_set_data(G_OBJECT(child),"x",GINT_TO_POINTER(cinfo->x));
 		g_object_set_data(G_OBJECT(child),"y",GINT_TO_POINTER(cinfo->y));
+		g_object_set_data(G_OBJECT(child),"has_x",GINT_TO_POINTER(1));
+		g_object_set_data(G_OBJECT(child),"has_y",GINT_TO_POINTER(1));
 		gtk_fixed_put(GTK_FIXED(w), child, cinfo->x, cinfo->y);
 	}
 }

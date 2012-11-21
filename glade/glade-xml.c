@@ -1324,6 +1324,10 @@ glade_xml_set_common_params(GladeXML *self, GtkWidget *widget,
 	g_object_set_data(G_OBJECT(widget),"height",GINT_TO_POINTER(info->height));
 	g_object_set_data(G_OBJECT(widget),"x",GINT_TO_POINTER(info->x));
 	g_object_set_data(G_OBJECT(widget),"y",GINT_TO_POINTER(info->y));
+	g_object_set_data(G_OBJECT(widget),"has_width",GINT_TO_POINTER(1));
+	g_object_set_data(G_OBJECT(widget),"has_height",GINT_TO_POINTER(1));
+	g_object_set_data(G_OBJECT(widget),"has_x",GINT_TO_POINTER(1));
+	g_object_set_data(G_OBJECT(widget),"has_y",GINT_TO_POINTER(1));
 	if (info->border_width > 0)
 		gtk_container_set_border_width(GTK_CONTAINER(widget),
 					       info->border_width);
