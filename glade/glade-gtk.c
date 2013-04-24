@@ -730,6 +730,15 @@ panda_download_new(GladeXML *xml, GladeWidgetInfo *info)
 }
 
 static GtkWidget *
+panda_download2_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+	GtkWidget *wid;
+
+	wid = gtk_panda_download2_new();
+	return wid;
+}
+
+static GtkWidget *
 panda_print_new(GladeXML *xml, GladeWidgetInfo *info)
 {
 	GtkWidget *wid;
@@ -1484,46 +1493,47 @@ file_entry_build_children (GladeXML *xml, GtkWidget *w,
 
 static const GladeWidgetBuildData widget_data[] = {
 	/*generalwidgets*/
-	{"GtkLabel",			label_new,			NULL},
-	{"GtkAccelLabel",		accellabel_new,		NULL},
-	{"GtkEntry",			entry_new,			NULL},
+	{"GtkLabel",			label_new,				NULL},
+	{"GtkAccelLabel",		accellabel_new,			NULL},
+	{"GtkEntry",			entry_new,				NULL},
 #ifdef	USE_PANDA
-	{"GtkPandaEntry",		panda_entry_new,	NULL},
-	{"GtkNumberEntry",		number_entry_new,	NULL},
-	{"GtkPandaHTML",		panda_html_new,		NULL},
+	{"GtkPandaEntry",		panda_entry_new,		NULL},
+	{"GtkNumberEntry",		number_entry_new,		NULL},
+	{"GtkPandaHTML",		panda_html_new,			NULL},
 	{"GtkPandaPS",			panda_preview_new,		NULL},
 #endif
-	{"GtkButton",			button_new,			button_build_children},
-	{"GtkToggleButton",		togglebutton_new,	button_build_children},
-	{"GtkCheckButton",		checkbutton_new,	button_build_children},
-	{"GtkRadioButton",		radiobutton_new,	button_build_children},
+	{"GtkButton",			button_new,				button_build_children},
+	{"GtkToggleButton",		togglebutton_new,		button_build_children},
+	{"GtkCheckButton",		checkbutton_new,		button_build_children},
+	{"GtkRadioButton",		radiobutton_new,		button_build_children},
 #ifdef	USE_PANDA
-	{"GtkPandaCombo",		panda_combo_new,	panda_combo_build_children},
-	{"GtkPandaCList",		panda_clist_new,	panda_clist_build_children},
-	{"GtkPandaText",		panda_text_new,		NULL},
-	{"GtkPandaTimer",		panda_timer_new,	NULL},
-	{"GtkPandaDownload",	panda_download_new,	NULL},
-	{"GtkPandaPrint",		panda_print_new,	NULL},
-	{"GtkPandaTable",		panda_table_new,	NULL},
+	{"GtkPandaCombo",		panda_combo_new,		panda_combo_build_children},
+	{"GtkPandaCList",		panda_clist_new,		panda_clist_build_children},
+	{"GtkPandaText",		panda_text_new,			NULL},
+	{"GtkPandaTimer",		panda_timer_new,		NULL},
+	{"GtkPandaDownload",	panda_download_new,		NULL},
+	{"GtkPandaDownload2",	panda_download2_new,	NULL},
+	{"GtkPandaPrint",		panda_print_new,		NULL},
+	{"GtkPandaTable",		panda_table_new,		NULL},
 #endif
-	{"GtkProgressBar",		progressbar_new,	NULL},
-	{"GtkHSeparator",		hseparator_new,		NULL},
-	{"GtkVSeparator",		vseparator_new,		NULL},
-	{"GtkHBox",				hbox_new,			box_build_children},
-	{"GtkVBox",				vbox_new,			box_build_children},
-	{"GtkTable",			table_new,			table_build_children},
-	{"GtkFixed",			fixed_new,			fixed_build_children},
-	{"GtkFrame",			frame_new,			glade_standard_build_children},
-	{"GtkNotebook",			notebook_new,		notebook_build_children},
-	{"GtkScrolledWindow",	scrolledwindow_new,	glade_standard_build_children},
-	{"GtkViewport",			viewport_new,		glade_standard_build_children},
-	{"GtkCalendar",			calendar_new,		NULL},
-	{"GtkWindow",			window_new,			window_build_children},
-	{"GtkFileChooserButton",filechooserbutton_new,		NULL},
-	{"GtkColorButton",		colorbutton_new,	NULL},
+	{"GtkProgressBar",		progressbar_new,		NULL},
+	{"GtkHSeparator",		hseparator_new,			NULL},
+	{"GtkVSeparator",		vseparator_new,			NULL},
+	{"GtkHBox",				hbox_new,				box_build_children},
+	{"GtkVBox",				vbox_new,				box_build_children},
+	{"GtkTable",			table_new,				table_build_children},
+	{"GtkFixed",			fixed_new,				fixed_build_children},
+	{"GtkFrame",			frame_new,				glade_standard_build_children},
+	{"GtkNotebook",			notebook_new,			notebook_build_children},
+	{"GtkScrolledWindow",	scrolledwindow_new,		glade_standard_build_children},
+	{"GtkViewport",			viewport_new,			glade_standard_build_children},
+	{"GtkCalendar",			calendar_new,			NULL},
+	{"GtkWindow",			window_new,				window_build_children},
+	{"GtkFileChooserButton",filechooserbutton_new,	NULL},
+	{"GtkColorButton",		colorbutton_new,		NULL},
 /* Gnome widgets in previouse version */
-	{"GnomePixmap",		 	pixmap_new,			NULL},
-	{"GnomeFileEntry",	 	file_entry_new,		file_entry_build_children},
+	{"GnomePixmap",		 	pixmap_new,				NULL},
+	{"GnomeFileEntry",	 	file_entry_new,			file_entry_build_children},
 	{NULL,NULL,NULL}
 };
 
