@@ -358,11 +358,9 @@ panda_combo_build_children (GladeXML *xml, GtkWidget *w,
 		} else if (!strcmp(attr->name, "text_visible")) {
 			gtk_entry_set_visibility(entry, attr->value[0] == 'T');
 		} else if (!strcmp(attr->name, "text_max_length")) {
-			gtk_entry_set_max_length(entry, strtol(attr->value,
-							       NULL, 0));
+			gtk_entry_set_max_length(entry, strtol(attr->value, NULL, 0));
 		} else if (!strcmp(attr->name, "max_length")) {
-			gtk_entry_set_max_length(entry, strtol(attr->value,
-							       NULL, 0));
+			gtk_entry_set_max_length(entry, strtol(attr->value, NULL, 0));
 		} else if (!strcmp(attr->name, "text")) {
 			gtk_entry_set_text(entry, attr->value);
 		}
@@ -514,6 +512,10 @@ entry_new (GladeXML *xml, GladeWidgetInfo *info)
 			else if (!strcmp(attr->name, "text_max_length"))
 				text_max_length = strtol(attr->value, NULL, 0);
 			break;
+		case 'm':
+			if (!strcmp(attr->name, "max_length"))
+				text_max_length = strtol(attr->value, NULL, 0);
+			break;
 		}
 	}
 	if (text_max_length >= 0)
@@ -570,6 +572,10 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 			else if (!strcmp(attr->name, "text_visible"))
 				text_visible = attr->value[0] == 'T';
 			else if (!strcmp(attr->name, "text_max_length"))
+				text_max_length = strtol(attr->value, NULL, 0);
+			break;
+		case 'm':
+			if (!strcmp(attr->name, "max_length"))
 				text_max_length = strtol(attr->value, NULL, 0);
 			break;
 		case 'u':
@@ -1477,8 +1483,9 @@ file_entry_build_children (GladeXML *xml, GtkWidget *w,
         else if (!strcmp(attr->name, "text_visible"))
             gtk_entry_set_visibility(entry, attr->value[0] == 'T');
         else if (!strcmp(attr->name, "text_max_length"))
-            gtk_entry_set_max_length(entry, strtol(attr->value,
-                                   NULL, 0));
+            gtk_entry_set_max_length(entry, strtol(attr->value, NULL, 0));
+        else if (!strcmp(attr->name, "max_length"))
+            gtk_entry_set_max_length(entry, strtol(attr->value, NULL, 0));
         else if (!strcmp(attr->name, "text"))
             gtk_entry_set_text(entry, attr->value);
     }
