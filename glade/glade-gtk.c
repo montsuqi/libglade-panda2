@@ -360,6 +360,9 @@ panda_combo_build_children (GladeXML *xml, GtkWidget *w,
 		} else if (!strcmp(attr->name, "text_max_length")) {
 			gtk_entry_set_max_length(entry, strtol(attr->value,
 							       NULL, 0));
+		} else if (!strcmp(attr->name, "max_length")) {
+			gtk_entry_set_max_length(entry, strtol(attr->value,
+							       NULL, 0));
 		} else if (!strcmp(attr->name, "text")) {
 			gtk_entry_set_text(entry, attr->value);
 		}
