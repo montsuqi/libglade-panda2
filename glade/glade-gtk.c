@@ -410,6 +410,7 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
 	GtkWidget *label;
 	guint key;
 	gchar *string = NULL, *focus_target = NULL;
+	GtkJustification just = GTK_JUSTIFY_CENTER;
 	gboolean wrap = FALSE;
 
 	for (tmp = info->attributes; tmp; tmp = tmp->next) {
@@ -417,6 +418,9 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
 
 		if (!strcmp(attr->name, "label")) {
 			string = attr->value;
+		} else if (!strcmp(attr->name, "justify")) {
+			just = glade_enum_from_string(GTK_TYPE_JUSTIFICATION,
+						      attr->value);
 		} else if (!strcmp(attr->name, "default_focus_target")) {
 			if (!focus_target) focus_target = attr->value;
 		} else if (!strcmp(attr->name, "focus_target"))
@@ -435,6 +439,12 @@ label_new (GladeXML *xml, GladeWidgetInfo *info)
 	
 	if (key)
 		glade_xml_handle_label_accel(xml, focus_target, key);
+// for Gtk+1.2 compatibility
+// in Gtk+2.x Justify > Align
+#if 0
+	if (just != GTK_JUSTIFY_CENTER)
+		gtk_label_set_justify(GTK_LABEL(label), just);
+#endif
 	if (wrap)
 		gtk_label_set_line_wrap(GTK_LABEL(label), wrap);
 	if (GTK_IS_MISC(label))
@@ -661,12 +671,17 @@ panda_text_new(GladeXML *xml, GladeWidgetInfo *info)
 	GtkWidget *wid;
 	GList *tmp;
 	char *text = NULL;
+	gboolean editable = TRUE;
 	gboolean im = FALSE;
     GtkTextBuffer *buffer;
 
 	for (tmp = info->attributes; tmp; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
 		switch (attr->name[0]) {
+		case 'e':
+			if (!strcmp(attr->name, "editable"))
+				editable = attr->value[0] == 'T';
+			break;
 		case 't':
 			if (!strcmp(attr->name, "text"))
 				text = attr->value;
@@ -997,23 +1012,30 @@ panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
 	GList *tmp;
 
 	table = gtk_panda_table_new();
+	for (tmp = info->attributes; tmp; tmp = tmp->next) {
+		GladeAttribute *attr = tmp->data;
+		if (!strcmp(attr->name, "columns")) {
+			gtk_panda_table_set_columns(
+				GTK_PANDA_TABLE(table), atoi(attr->value));
+		}
+	}
 
 	for (tmp = info->attributes; tmp; tmp = tmp->next) {
 		GladeAttribute *attr = tmp->data;
-		if (
-			!strcmp(attr->name, "column_types") ||
-			!strcmp(attr->name, "column_titles") ||
-			!strcmp(attr->name, "column_widths") 
-		) {
-			g_object_set(G_OBJECT(table),attr->name,attr->value,NULL);
-		} else if (
-			!strcmp(attr->name, "rows") ||
-			!strcmp(attr->name, "columns")
-		) {
-			g_object_set(G_OBJECT(table),attr->name,atoi(attr->value),NULL);
+		if (!strcmp(attr->name, "column_types")) {
+			gtk_panda_table_set_types(GTK_PANDA_TABLE(table), 
+				attr->value);
+		} else if (!strcmp(attr->name, "column_titles")) {
+			gtk_panda_table_set_titles(GTK_PANDA_TABLE(table), 
+				attr->value);
+		} else if (!strcmp(attr->name, "column_widths")) {
+			gtk_panda_table_set_column_widths(GTK_PANDA_TABLE(table), 
+				attr->value);
+		} else if (!strcmp(attr->name, "rows")) {
+			gtk_panda_table_set_rows(
+				GTK_PANDA_TABLE(table), atoi(attr->value));
 		}
 	}
-	gtk_panda_table_build(GTK_PANDA_TABLE(table));
 	return table;
 }
 #endif	/* USE_PANDA */
@@ -1408,7 +1430,22 @@ static GtkWidget *
 file_entry_new(GladeXML *xml, GladeWidgetInfo *info)
 {
     GtkWidget *wid;
+    GList *tmp;
+    gchar *history_id = NULL, *title = NULL;
+    gboolean directory = FALSE, modal = FALSE;
 
+        for (tmp = info->attributes; tmp; tmp = tmp->next) {
+        GladeAttribute *attr = tmp->data;
+
+        if (!strcmp(attr->name, "history_id"))
+            history_id = attr->value;
+        else if (!strcmp(attr->name, "title"))
+            title = attr->value;
+        else if (!strcmp(attr->name, "directory"))
+            directory = (attr->value[0] == 'T');
+        else if (!strcmp(attr->name, "modal"))
+            modal = (attr->value[0] == 'T');
+    }
     wid = gtk_panda_file_entry_new();
     return wid;
 }
