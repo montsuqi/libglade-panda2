@@ -1034,6 +1034,9 @@ panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
 		} else if (!strcmp(attr->name, "rows")) {
 			gtk_panda_table_set_rows(
 				GTK_PANDA_TABLE(table), atoi(attr->value));
+		} else if (!strcmp(attr->name, "im_controls")) {
+			gtk_panda_table_set_im_controls(
+				GTK_PANDA_TABLE(table), atoi(attr->value));
 		}
 	}
 	return table;
