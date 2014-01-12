@@ -1036,7 +1036,7 @@ panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
 				GTK_PANDA_TABLE(table), atoi(attr->value));
 		} else if (!strcmp(attr->name, "im_controls")) {
 			gtk_panda_table_set_im_controls(
-				GTK_PANDA_TABLE(table), atoi(attr->value));
+				GTK_PANDA_TABLE(table), attr->value);
 		}
 	}
 	return table;
@@ -1387,7 +1387,6 @@ static GtkWidget *
 colorbutton_new(GladeXML *xml, GladeWidgetInfo *info)
 {
 	GList *tmp;
-	char *title = NULL;
     GtkWidget *wid;
 	GdkColor color;
 
