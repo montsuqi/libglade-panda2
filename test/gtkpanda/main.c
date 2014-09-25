@@ -56,7 +56,6 @@ main (int argc, char *argv[])
 
   for (i = 0; i < 100; i++){
       sprintf (text[0], "行 %d", i);
-      gtk_panda_clist_append (GTK_PANDA_CLIST (clist), texts);
   }
 
   gtk_main ();
