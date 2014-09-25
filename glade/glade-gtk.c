@@ -199,6 +199,8 @@ fixed_build_children (GladeXML *xml, GtkWidget *w, GladeWidgetInfo *info,
 
 		g_object_set_data(G_OBJECT(child),"x",GINT_TO_POINTER(cinfo->x));
 		g_object_set_data(G_OBJECT(child),"y",GINT_TO_POINTER(cinfo->y));
+		g_object_set_data(G_OBJECT(child),"has_x",GINT_TO_POINTER(1));
+		g_object_set_data(G_OBJECT(child),"has_y",GINT_TO_POINTER(1));
 		gtk_fixed_put(GTK_FIXED(w), child, cinfo->x, cinfo->y);
 	}
 }
@@ -356,8 +358,9 @@ panda_combo_build_children (GladeXML *xml, GtkWidget *w,
 		} else if (!strcmp(attr->name, "text_visible")) {
 			gtk_entry_set_visibility(entry, attr->value[0] == 'T');
 		} else if (!strcmp(attr->name, "text_max_length")) {
-			gtk_entry_set_max_length(entry, strtol(attr->value,
-							       NULL, 0));
+			gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
+		} else if (!strcmp(attr->name, "max_length")) {
+			gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
 		} else if (!strcmp(attr->name, "text")) {
 			gtk_entry_set_text(entry, attr->value);
 		}
@@ -509,6 +512,10 @@ entry_new (GladeXML *xml, GladeWidgetInfo *info)
 			else if (!strcmp(attr->name, "text_max_length"))
 				text_max_length = strtol(attr->value, NULL, 0);
 			break;
+		case 'm':
+			if (!strcmp(attr->name, "max_length"))
+				text_max_length = strtol(attr->value, NULL, 0);
+			break;
 		}
 	}
 	if (text_max_length >= 0)
@@ -565,6 +572,10 @@ panda_entry_new (GladeXML *xml, GladeWidgetInfo *info)
 			else if (!strcmp(attr->name, "text_visible"))
 				text_visible = attr->value[0] == 'T';
 			else if (!strcmp(attr->name, "text_max_length"))
+				text_max_length = strtol(attr->value, NULL, 0);
+			break;
+		case 'm':
+			if (!strcmp(attr->name, "max_length"))
 				text_max_length = strtol(attr->value, NULL, 0);
 			break;
 		case 'u':
@@ -724,6 +735,15 @@ panda_download_new(GladeXML *xml, GladeWidgetInfo *info)
 	GtkWidget *wid;
 
 	wid = gtk_panda_download_new();
+	return wid;
+}
+
+static GtkWidget *
+panda_download2_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+	GtkWidget *wid;
+
+	wid = gtk_panda_download2_new();
 	return wid;
 }
 
@@ -1023,6 +1043,9 @@ panda_table_new(GladeXML *xml, GladeWidgetInfo *info)
 		} else if (!strcmp(attr->name, "rows")) {
 			gtk_panda_table_set_rows(
 				GTK_PANDA_TABLE(table), atoi(attr->value));
+		} else if (!strcmp(attr->name, "im_controls")) {
+			gtk_panda_table_set_im_controls(
+				GTK_PANDA_TABLE(table), attr->value);
 		}
 	}
 	return table;
@@ -1360,6 +1383,38 @@ window_new (GladeXML *xml, GladeWidgetInfo *info)
 }
 
 static GtkWidget *
+filechooserbutton_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+    GtkWidget *wid;
+
+    wid = gtk_file_chooser_button_new("",GTK_FILE_CHOOSER_ACTION_OPEN);
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(wid),"");
+    return wid;
+}
+
+static GtkWidget *
+colorbutton_new(GladeXML *xml, GladeWidgetInfo *info)
+{
+	GList *tmp;
+    GtkWidget *wid;
+	GdkColor color;
+
+    wid = gtk_color_button_new();
+
+	for (tmp = info->attributes; tmp; tmp = tmp->next) {
+		GladeAttribute *attr = tmp->data;
+
+		if (!strcmp(attr->name, "title")) {
+			gtk_color_button_set_title(GTK_COLOR_BUTTON(wid),attr->value);
+		} else if (!strcmp(attr->name, "color")) {
+			gdk_color_parse(attr->value,&color);
+			gtk_color_button_set_color(GTK_COLOR_BUTTON(wid),&color);
+		}
+	}
+    return wid;
+}
+
+static GtkWidget *
 pixmap_new(GladeXML *xml, GladeWidgetInfo *info)
 {
 	GtkWidget *wid;
@@ -1439,8 +1494,9 @@ file_entry_build_children (GladeXML *xml, GtkWidget *w,
         else if (!strcmp(attr->name, "text_visible"))
             gtk_entry_set_visibility(entry, attr->value[0] == 'T');
         else if (!strcmp(attr->name, "text_max_length"))
-            gtk_entry_set_max_length(entry, strtol(attr->value,
-                                   NULL, 0));
+            gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
+        else if (!strcmp(attr->name, "max_length"))
+            gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
         else if (!strcmp(attr->name, "text"))
             gtk_entry_set_text(entry, attr->value);
     }
@@ -1449,44 +1505,47 @@ file_entry_build_children (GladeXML *xml, GtkWidget *w,
 
 static const GladeWidgetBuildData widget_data[] = {
 	/*generalwidgets*/
-	{"GtkLabel",			label_new,			NULL},
-	{"GtkAccelLabel",		accellabel_new,		NULL},
-	{"GtkEntry",			entry_new,			NULL},
+	{"GtkLabel",			label_new,				NULL},
+	{"GtkAccelLabel",		accellabel_new,			NULL},
+	{"GtkEntry",			entry_new,				NULL},
 #ifdef	USE_PANDA
-	{"GtkPandaEntry",		panda_entry_new,	NULL},
-	{"GtkNumberEntry",		number_entry_new,	NULL},
-	{"GtkPandaHTML",		panda_html_new,		NULL},
+	{"GtkPandaEntry",		panda_entry_new,		NULL},
+	{"GtkNumberEntry",		number_entry_new,		NULL},
+	{"GtkPandaHTML",		panda_html_new,			NULL},
 	{"GtkPandaPS",			panda_preview_new,		NULL},
 #endif
-	{"GtkButton",			button_new,			button_build_children},
-	{"GtkToggleButton",		togglebutton_new,	button_build_children},
-	{"GtkCheckButton",		checkbutton_new,	button_build_children},
-	{"GtkRadioButton",		radiobutton_new,	button_build_children},
+	{"GtkButton",			button_new,				button_build_children},
+	{"GtkToggleButton",		togglebutton_new,		button_build_children},
+	{"GtkCheckButton",		checkbutton_new,		button_build_children},
+	{"GtkRadioButton",		radiobutton_new,		button_build_children},
 #ifdef	USE_PANDA
-	{"GtkPandaCombo",		panda_combo_new,	panda_combo_build_children},
-	{"GtkPandaCList",		panda_clist_new,	panda_clist_build_children},
-	{"GtkPandaText",		panda_text_new,		NULL},
-	{"GtkPandaTimer",		panda_timer_new,	NULL},
-	{"GtkPandaDownload",	panda_download_new,	NULL},
-	{"GtkPandaPrint",		panda_print_new,	NULL},
-	{"GtkPandaTable",		panda_table_new,	NULL},
+	{"GtkPandaCombo",		panda_combo_new,		panda_combo_build_children},
+	{"GtkPandaCList",		panda_clist_new,		panda_clist_build_children},
+	{"GtkPandaText",		panda_text_new,			NULL},
+	{"GtkPandaTimer",		panda_timer_new,		NULL},
+	{"GtkPandaDownload",	panda_download_new,		NULL},
+	{"GtkPandaDownload2",	panda_download2_new,	NULL},
+	{"GtkPandaPrint",		panda_print_new,		NULL},
+	{"GtkPandaTable",		panda_table_new,		NULL},
 #endif
-	{"GtkProgressBar",		progressbar_new,	NULL},
-	{"GtkHSeparator",		hseparator_new,		NULL},
-	{"GtkVSeparator",		vseparator_new,		NULL},
-	{"GtkHBox",				hbox_new,			box_build_children},
-	{"GtkVBox",				vbox_new,			box_build_children},
-	{"GtkTable",			table_new,			table_build_children},
-	{"GtkFixed",			fixed_new,			fixed_build_children},
-	{"GtkFrame",			frame_new,			glade_standard_build_children},
-	{"GtkNotebook",			notebook_new,		notebook_build_children},
-	{"GtkScrolledWindow",	scrolledwindow_new,	glade_standard_build_children},
-	{"GtkViewport",			viewport_new,		glade_standard_build_children},
-	{"GtkCalendar",			calendar_new,		NULL},
-	{"GtkWindow",			window_new,			window_build_children},
+	{"GtkProgressBar",		progressbar_new,		NULL},
+	{"GtkHSeparator",		hseparator_new,			NULL},
+	{"GtkVSeparator",		vseparator_new,			NULL},
+	{"GtkHBox",				hbox_new,				box_build_children},
+	{"GtkVBox",				vbox_new,				box_build_children},
+	{"GtkTable",			table_new,				table_build_children},
+	{"GtkFixed",			fixed_new,				fixed_build_children},
+	{"GtkFrame",			frame_new,				glade_standard_build_children},
+	{"GtkNotebook",			notebook_new,			notebook_build_children},
+	{"GtkScrolledWindow",	scrolledwindow_new,		glade_standard_build_children},
+	{"GtkViewport",			viewport_new,			glade_standard_build_children},
+	{"GtkCalendar",			calendar_new,			NULL},
+	{"GtkWindow",			window_new,				window_build_children},
+	{"GtkFileChooserButton",filechooserbutton_new,	NULL},
+	{"GtkColorButton",		colorbutton_new,		NULL},
 /* Gnome widgets in previouse version */
-	{"GnomePixmap",			pixmap_new,			NULL},
-	{"GnomeFileEntry",		file_entry_new,		file_entry_build_children},
+	{"GnomePixmap",		 	pixmap_new,				NULL},
+	{"GnomeFileEntry",	 	file_entry_new,			file_entry_build_children},
 	{NULL,NULL,NULL}
 };
 
