@@ -1436,73 +1436,6 @@ pixmap_new(GladeXML *xml, GladeWidgetInfo *info)
 	return wid;
 }
 
-
-static GtkWidget *
-file_entry_new(GladeXML *xml, GladeWidgetInfo *info)
-{
-    GtkWidget *wid;
-    GList *tmp;
-    gchar *history_id = NULL, *title = NULL;
-    gboolean directory = FALSE, modal = FALSE;
-
-        for (tmp = info->attributes; tmp; tmp = tmp->next) {
-        GladeAttribute *attr = tmp->data;
-
-        if (!strcmp(attr->name, "history_id"))
-            history_id = attr->value;
-        else if (!strcmp(attr->name, "title"))
-            title = attr->value;
-        else if (!strcmp(attr->name, "directory"))
-            directory = (attr->value[0] == 'T');
-        else if (!strcmp(attr->name, "modal"))
-            modal = (attr->value[0] == 'T');
-    }
-    wid = gtk_panda_file_entry_new();
-    return wid;
-}
-
-static void
-file_entry_build_children (GladeXML *xml, GtkWidget *w,
-              GladeWidgetInfo *info, const char *longname)
-{
-    GList *tmp;
-    GladeWidgetInfo *cinfo = NULL;
-    GtkEntry *entry;
-
-    for (tmp = info->children; tmp; tmp = tmp->next) {
-        GList *tmp2;
-        gchar *child_name = NULL;
-        cinfo = tmp->data;
-        for (tmp2 = cinfo->attributes; tmp2; tmp2 = tmp2->next) {
-            GladeAttribute *attr = tmp2->data;
-            if (!strcmp(attr->name, "child_name")) {
-                child_name = attr->value;
-                break;
-            }
-        }
-        if (child_name && !strcmp(child_name, "GnomeEntry:entry"))
-            break;
-    }
-    if (!tmp)
-        return;
-    entry = GTK_ENTRY(GTK_PANDA_FILE_ENTRY(w)->entry);
-
-    for (tmp = cinfo->attributes; tmp; tmp = tmp->next) {
-        GladeAttribute *attr = tmp->data;
-        if (!strcmp(attr->name, "editable"))
-            gtk_entry_set_editable(entry, attr->value[0] == 'T');
-        else if (!strcmp(attr->name, "text_visible"))
-            gtk_entry_set_visibility(entry, attr->value[0] == 'T');
-        else if (!strcmp(attr->name, "text_max_length"))
-            gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
-        else if (!strcmp(attr->name, "max_length"))
-            gtk_entry_set_max_length(entry, strtol(attr->value,NULL, 0));
-        else if (!strcmp(attr->name, "text"))
-            gtk_entry_set_text(entry, attr->value);
-    }
-    glade_xml_set_common_params(xml, GTK_WIDGET(entry), cinfo, longname);
-}
-
 static const GladeWidgetBuildData widget_data[] = {
 	/*generalwidgets*/
 	{"GtkLabel",			label_new,				NULL},
@@ -1545,7 +1478,6 @@ static const GladeWidgetBuildData widget_data[] = {
 	{"GtkColorButton",		colorbutton_new,		NULL},
 /* Gnome widgets in previouse version */
 	{"GnomePixmap",		 	pixmap_new,				NULL},
-	{"GnomeFileEntry",	 	file_entry_new,			file_entry_build_children},
 	{NULL,NULL,NULL}
 };
 
