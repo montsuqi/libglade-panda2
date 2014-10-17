@@ -1,4 +1,6 @@
-INCLUDES = $(LIBGLADE_PANDA_CFLAGS)
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/ $(LIBGLADE_PANDA_CFLAGS)
+
 noinst_PROGRAMS = \
 	test-libglade-panda \
 	panda-glade-convert

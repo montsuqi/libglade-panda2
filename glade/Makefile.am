@@ -9,7 +9,7 @@
 
 LTVERSION = 2:0:1
 
-INCLUDES = -I$(srcdir)/.. $(LIBGLADE_PANDA_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/.. $(LIBGLADE_PANDA_CFLAGS)
 
 the_sources =		\
 	glade-init.c 	\
